@@ -2,7 +2,7 @@
 
 ## 当前工具链
 
-以下版本依据本机已安装组件与已有缓存配置，尚未完成应用编译验证：
+以下版本依据本机已安装组件与已有缓存配置，最小工程已完成编译与模拟器启动验证：
 
 - Android Studio Rabbit 2 | 2026.2.2。
 - Android Studio 自带 JBR：E:/android-stuido/jbr，Java 25.0.4。
@@ -29,10 +29,20 @@
 - 已通过工程自带 gradlew.bat --version 验证启动脚本，返回 Gradle 9.6.0 与 JBR 25.0.4。
 - 6 个 XML 文件通过语法解析；Wrapper JAR 入口存在。这些检查不能代替 Android 构建与运行。
 - 最小工程文件、资源、启动 Activity 和 ViewBinding 已创建。
-- 构建命令已实际尝试，但失败发生在工程目录验证阶段，尚未进入 Kotlin 或资源编译。
+- 初次构建失败发生在工程目录验证阶段，尚未进入 Kotlin 或资源编译（历史问题，后续验证见下）。
 - Java 检查：目录存在，是目录；Files.isWritable 返回 false；同一进程在该目录实际创建并删除临时文件成功。
-- 明确授予项目目录写入权限后重试，Gradle 仍报 projectDirectory 不可写。尚未在用户直接启动的 Android Studio 环境验证。
-- 不修改目录安全设置，不把本次失败标记为构建成功。下一步优先在 Android Studio 同步与构建，取得真实报错后继续处理。
+- 初次明确授予项目目录写入权限后重试，Gradle 仍报 projectDirectory 不可写。此项记录保留，不代表当前构建结论。
+
+## 2026-11-01：构建与启动验证通过
+
+- 用户在 Android Studio 打开并识别工程，IDE 生成 Gradle Daemon JVM 配置，固定 Java 25。
+- 使用正常进程权限与已有缓存运行 gradlew.bat --offline --console=plain :app:assembleDebug。
+- 结果：BUILD SUCCESSFUL，37 个任务执行，耗时 33 秒。无需修改目录安全设置。
+- 生成 app/build/outputs/apk/debug/app-debug.apk，大小 3,096,998 字节。
+- 后台启动现有 Pixel_10 AVD，adb install -r 返回 Success。
+- am start -W 返回 Status: ok、LaunchState: COLD、TotalTime: 2423ms。
+- 检查实际首页截图：中文、卡片、空状态及系统栏未见遮挡；本次 AndroidRuntime 错误日志无输出。
+- 这只验证当前启动骨架，不等于学习、数据库或小组件已完成，也不代表所有机型均已覆盖。
 
 ## 命令行（Windows）
 
@@ -43,4 +53,4 @@ $env:JAVA_HOME = 'E:\android-stuido\jbr'
 .\gradlew.bat :app:assembleDebug
 ```
 
-成功后安装包预计位于 app/build/outputs/apk/debug/app-debug.apk。当前未生成并验证该安装包。
+成功后安装包位于 app/build/outputs/apk/debug/app-debug.apk。本次已生成，并在 Pixel 10 模拟器中验证安装与启动。
