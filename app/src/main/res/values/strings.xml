@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">词迹</string>
+    <string name="brand_caption">WORDTRAIL · 每天留下一点进步</string>
+    <string name="home_title">让每个单词，\n都留下记忆。</string>
+    <string name="home_description">从一个单词本开始，在合适的时间温习所学。</string>
+    <string name="empty_title">还没有单词本</string>
+    <string name="empty_description">词本管理即将开放。准备好你的词表，开启学习之旅。</string>
+    <string name="learning_label">学习与复习</string>
+    <string name="learning_description">新词学习 · 间隔复习 · 单词测试</string>
+    <string name="progress_label">记录你的进步</string>
+    <string name="progress_description">学习统计 · 词本进度 · 桌面小组件</string>
+</resources>

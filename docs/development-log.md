@@ -29,3 +29,12 @@
 ### 下一阶段
 
 在取得提交署名后按真实日期提交本阶段成果。结合截止日期继续页面原型、数据模型和工程环境核实。
+
+## 2026-11-01：署名配置与最小工程
+
+- 按用户提供的用户名与邮箱完成仓库级配置，首次需求提交为 9fccf8f。
+- 查明 Android Studio JBR 位置，避免系统 Java 8 被误用；确认已有 Gradle、AGP 与 SDK 平台组件。
+- 创建 Kotlin + XML 工程、启动首页、ViewBinding、系统栏避让和 Gradle Wrapper。
+- 真实构建未通过：Gradle 对工程目录可写性检查失败，尚未进入代码编译；Java 实测可创建、删除文件但 Files.isWritable 为 false。详见 build-environment.md。
+- 已读取远程 main：仅初始化 README 和 .gitignore，后续合并时保留原历史；未强制覆盖。
+- 当前尚无数据库、完整导航、复习、统计、导入导出或小组件，不记为已完成。
