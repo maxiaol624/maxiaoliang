@@ -22,3 +22,13 @@ secrets.properties
 Thumbs.db
 Desktop.ini
 *.log
+
+# Existing remote repository rules
+*.aab
+*.apk
+output-metadata.json
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+google-services.json
+*.hprof

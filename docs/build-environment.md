@@ -26,6 +26,8 @@
 ## 已做验证
 
 - Wrapper JAR 从本机 Gradle 9.6.0 分发包内提取，启动脚本随工程提供。
+- 已通过工程自带 gradlew.bat --version 验证启动脚本，返回 Gradle 9.6.0 与 JBR 25.0.4。
+- 6 个 XML 文件通过语法解析；Wrapper JAR 入口存在。这些检查不能代替 Android 构建与运行。
 - 最小工程文件、资源、启动 Activity 和 ViewBinding 已创建。
 - 构建命令已实际尝试，但失败发生在工程目录验证阶段，尚未进入 Kotlin 或资源编译。
 - Java 检查：目录存在，是目录；Files.isWritable 返回 false；同一进程在该目录实际创建并删除临时文件成功。
