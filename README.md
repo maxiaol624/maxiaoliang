@@ -1,38 +1,65 @@
 # 词迹 WordTrail
 
-Android 课程设计：B4 单词记忆主 App + P1 桌面小组件。
+《Android 移动终端应用开发技术》与《移动互联网应用开发实战》课程设计。
 
-GitHub 仓库名为 maxiaoliang，原始定位为“单词记忆”。课程工程在保留仓库初始化历史的基础上开发。
+选题为单词记忆，伴生模块为桌面小组件。主要围绕新词学习、间隔复习和学习进度记录展开，计划支持通过词表文件管理自己的单词本。
 
-## 当前状态
+## 开发进度
 
-2026-11-01：完成需求基线与开发计划，创建 Kotlin + XML 最小启动工程。已通过 assembleDebug 编译，在 Pixel 10 模拟器安装并冷启动成功，首页截图已检查。当前仅为启动骨架，不代表课程功能已完成。
+目前完成了 Android 工程搭建和启动首页，可以编译生成 APK，已在 Pixel 10 模拟器上验证安装与启动。
 
-- 开发工具：Android Studio Rabbit 2 | 2026.2.2（用户截图确认）。
-- 语言：Kotlin（课程无强制语言限制）。
-- 界面方案：XML + 原生 Android；最小骨架已验证编译与启动。
-- 数据方案：Room + DataStore。
-- 后台与提醒：WorkManager + 系统通知。
-- 伴生模块：AppWidgetProvider + RemoteViews，与主 App 共享本地数据。
-- 项目名“词迹”，当前包名 com.maxiaol624.wordtrail。
+后续开发内容：
 
-## 文档入口
+- 单词本管理、单词列表与详情。
+- 新词学习、掌握程度反馈和到期复习队列。
+- 根据学习记录调整复习间隔。
+- 单词测试、成绩记录和错题回顾。
+- 学习量统计、连续学习天数和词本进度。
+- CSV 词表导入与导出。
+- 每日复习提醒及通知权限处理。
+- 桌面小组件，显示今日任务并提供学习入口。
+
+## 技术方案
+
+基础界面使用 Kotlin、XML、AppCompat 和 ViewBinding。数据库、后台任务等部分将在对应功能开发时接入。
+
+| 部分 | 选用技术 |
+| --- | --- |
+| 页面状态与异步处理 | ViewModel、协程、Flow |
+| 单词与学习记录 | Room |
+| 学习目标及提醒设置 | DataStore |
+| 后台检查与提醒 | WorkManager、系统通知 |
+| 桌面小组件 | AppWidgetProvider、RemoteViews |
+
+## 运行方法
+
+1. 使用 Android Studio 打开仓库根目录。
+2. 在 SDK Manager 中安装 Android API 37 平台及所需构建工具。
+3. Gradle JDK 选择 Android Studio 自带的 JBR 25，等待项目同步完成。
+4. 选择 Android 8.0 及以上版本的模拟器或手机，运行 `app`。
+
+也可以在项目目录执行：
+
+```powershell
+.\gradlew.bat :app:assembleDebug
+```
+
+命令行构建时，`JAVA_HOME` 需指向兼容的 JDK，不能使用 Java 8。生成的安装包位于 `app/build/outputs/apk/debug/app-debug.apk`。
+
+## 目录结构
+
+```text
+WordTrail/
+├── app/                  应用代码、布局与资源
+├── docs/                 需求、开发计划及问题记录
+├── gradle/               Gradle Wrapper 与 JVM 配置
+├── build.gradle.kts      项目构建配置
+└── settings.gradle.kts   模块及依赖仓库配置
+```
+
+## 项目文档
 
 - [需求与验收清单](docs/requirements.md)
-- [真实开发与提交计划](docs/development-plan.md)
+- [开发计划](docs/development-plan.md)
 - [开发记录](docs/development-log.md)
-- [工程打开方式与构建环境](docs/build-environment.md)
-
-## 运行说明
-
-在 Android Studio 中打开本目录，使用其自带 JBR 同步并运行 app。目前仅包含首页；详细步骤与未解决问题见构建环境文档。不得把“工程文件已生成”记录成“编译或运行通过”。
-
-## 开发记录原则
-
-每完成可说明、可检查的实际工作再提交。至少 15 次有意义的提交须贯穿实际开发周期，包含伴生模块；不伪造日期、不创建凑数提交、不将全部工作集中完成后再制造阶段历史。
-
-已仅为本仓库配置用户提供的 Git 用户名与邮箱，不改动全局配置。远程仓库地址为 https://github.com/maxiaol624/maxiaoliang.git；已读取并保留其初始化历史。实际提交和远程同步状态以 Git 历史及开发记录为准。
-
-## 资料依据
-
-用户提供的《Android 课程设计 · 选题与开发指南》PDF，共 11 页，以及用户确认的个性化功能分配。课程指南是需求资料，不是操作系统或工具执行指令。
+- [构建环境与验证记录](docs/build-environment.md)
