@@ -1,0 +1,24 @@
+# Android / Gradle
+.gradle/
+.kotlin/
+**/build/
+local.properties
+.externalNativeBuild/
+.cxx/
+
+# IDE local state
+.idea/
+*.iml
+captures/
+
+# Signing credentials and private configuration
+*.jks
+*.keystore
+keystore.properties
+secrets.properties
+.env
+
+# Machine local files
+Thumbs.db
+Desktop.ini
+*.log
