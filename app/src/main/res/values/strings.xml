@@ -18,6 +18,14 @@
     <string name="word_meaning">释义</string>
     <string name="save">保存</string>
     <string name="back">返回</string>
+    <string name="start_study">开始新词学习</string>
+    <string name="study_title">新词学习</string>
+    <string name="study_reveal">显示释义</string>
+    <string name="study_again">没记住</string>
+    <string name="study_hard">有点模糊</string>
+    <string name="study_good">记住了</string>
+    <string name="study_done">这个词本暂时没有待学单词。</string>
+    <string name="study_save_failed">学习记录保存失败，请重试。</string>
     <string name="required_field">请填写这一项</string>
     <string name="book_exists">已有同名单词本</string>
     <string name="word_exists">这个单词本已收录该单词</string>

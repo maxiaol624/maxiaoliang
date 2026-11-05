@@ -60,6 +60,9 @@ class CatalogActivity : AppCompatActivity() {
     private fun showBook(bookId: Long) {
         binding.pageTitle.setText(R.string.words_title)
         binding.add.setText(R.string.add_word)
+        binding.study.setOnClickListener {
+            startActivity(StudyActivity.intent(this, bookId))
+        }
         binding.add.setOnClickListener {
             showEditor(
                 R.string.add_word, R.string.word_term, R.string.word_exists, hasMeaning = true,
@@ -72,6 +75,7 @@ class CatalogActivity : AppCompatActivity() {
             } else {
                 binding.pageTitle.text = contents.book.name
                 binding.add.isVisible = true
+                binding.study.isVisible = contents.words.isNotEmpty()
                 renderList(contents.words, R.string.no_words, { it.term }) { word ->
                     startActivity(Intent(this, CatalogActivity::class.java).putExtra(EXTRA_WORD_ID, word.id))
                 }
@@ -112,6 +116,7 @@ class CatalogActivity : AppCompatActivity() {
 
     private fun showMessage(text: Int) {
         binding.add.isVisible = false
+        binding.study.isVisible = false
         binding.list.isVisible = false
         binding.detail.isVisible = false
         binding.message.isVisible = true

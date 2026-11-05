@@ -2,6 +2,7 @@ package com.maxiaol624.wordtrail
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.maxiaol624.wordtrail.data.FirstReview
 import com.maxiaol624.wordtrail.data.Word
 import com.maxiaol624.wordtrail.data.WordBook
 import com.maxiaol624.wordtrail.data.WordDatabase
@@ -18,6 +19,12 @@ class CatalogViewModel(application: Application) : AndroidViewModel(application)
 
     fun word(id: Long) = dao.word(id)
 
+    fun nextNewWord(bookId: Long) = dao.nextNewWord(bookId)
+
+    suspend fun recordFirstReview(wordId: Long, rating: LearningRating) {
+        dao.insertFirstReview(FirstReview(wordId, rating.name, System.currentTimeMillis()))
+    }
+
     suspend fun addBook(name: String) = dao.insertBook(WordBook(name)) != -1L
 
     suspend fun addWord(bookId: Long, term: String, meaning: String) =
@@ -25,3 +32,5 @@ class CatalogViewModel(application: Application) : AndroidViewModel(application)
 
     data class BookContents(val book: WordBook, val words: List<Word>)
 }
+
+enum class LearningRating { AGAIN, HARD, GOOD }
