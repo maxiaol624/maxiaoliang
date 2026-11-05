@@ -16,6 +16,7 @@
             android:text="@string/back"
             android:textColor="@color/accent" />
         <TextView
+            android:id="@+id/page_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -33,6 +34,13 @@
             android:text="@string/catalog_loading"
             android:textColor="@color/ink_secondary"
             android:textSize="16sp" />
+        <Button
+            android:id="@+id/practice_again"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/practice_again"
+            android:visibility="gone" />
         <LinearLayout
             android:id="@+id/card"
             android:layout_width="match_parent"
@@ -63,6 +71,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/study_reveal" />
+            <Button
+                android:id="@+id/practice_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/practice_next"
+                android:visibility="gone" />
             <LinearLayout
                 android:id="@+id/ratings"
                 android:layout_width="match_parent"

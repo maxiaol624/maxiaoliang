@@ -21,6 +21,8 @@ class CatalogViewModel(application: Application) : AndroidViewModel(application)
 
     fun nextNewWord(bookId: Long) = dao.nextNewWord(bookId)
 
+    fun nextPracticeWord(bookId: Long, afterId: Long) = dao.nextPracticeWord(bookId, afterId)
+
     suspend fun recordFirstReview(wordId: Long, rating: LearningRating) {
         dao.insertFirstReview(FirstReview(wordId, rating.name, System.currentTimeMillis()))
     }

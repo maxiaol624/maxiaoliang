@@ -25,6 +25,11 @@
     <string name="study_hard">有点模糊</string>
     <string name="study_good">记住了</string>
     <string name="study_done">这个词本暂时没有待学单词。</string>
+    <string name="practice_title">巩固练习</string>
+    <string name="practice_again">再练一遍</string>
+    <string name="practice_next">下一词</string>
+    <string name="practice_done">本轮练习完成。</string>
+    <string name="practice_empty">这个词本还没有已学单词。</string>
     <string name="study_save_failed">学习记录保存失败，请重试。</string>
     <string name="required_field">请填写这一项</string>
     <string name="book_exists">已有同名单词本</string>

@@ -77,6 +77,15 @@ interface WordDao {
     """)
     fun nextNewWord(bookId: Long): Flow<Word?>
 
+    @Query("""
+        SELECT words.* FROM words
+        INNER JOIN first_reviews ON first_reviews.wordId = words.id
+        WHERE words.bookId = :bookId AND words.id > :afterId
+        ORDER BY words.id
+        LIMIT 1
+    """)
+    fun nextPracticeWord(bookId: Long, afterId: Long): Flow<Word?>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFirstReview(review: FirstReview)
 
