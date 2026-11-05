@@ -1,6 +1,9 @@
 package com.maxiaol624.wordtrail
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -10,17 +13,23 @@ import com.maxiaol624.wordtrail.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // 兼容系统状态栏、手势导航和横屏刘海，避免内容被遮挡。
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
-            insets
+        applySystemBarPadding(binding.root)
+        binding.openBooks.setOnClickListener {
+            startActivity(Intent(this, CatalogActivity::class.java))
         }
+    }
+}
+
+internal fun Activity.applySystemBarPadding(root: View) {
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+    WindowCompat.getInsetsController(window, root).isAppearanceLightNavigationBars = true
+    ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+        val bars = insets.getInsets(
+            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+        )
+        view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+        insets
     }
 }
