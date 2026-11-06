@@ -5,6 +5,7 @@ import androidx.room.AutoMigration
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -14,6 +15,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "word_books", indices = [Index(value = ["name"], unique = true)])
@@ -54,6 +56,32 @@ data class FirstReview(
     val reviewedAt: Long,
 )
 
+@Entity(
+    tableName = "review_schedules",
+    foreignKeys = [ForeignKey(
+        entity = Word::class, parentColumns = ["id"], childColumns = ["wordId"],
+        onDelete = ForeignKey.CASCADE,
+    )],
+)
+data class ReviewSchedule(@PrimaryKey val wordId: Long, val stage: Int, val dueAt: Long)
+
+@Entity(
+    tableName = "review_events",
+    foreignKeys = [ForeignKey(
+        entity = Word::class, parentColumns = ["id"], childColumns = ["wordId"],
+        onDelete = ForeignKey.CASCADE,
+    )],
+    indices = [Index("wordId")],
+)
+data class ReviewEvent(
+    val wordId: Long,
+    val rating: String,
+    val reviewedAt: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+)
+
+data class ScheduledWord(@Embedded val word: Word, val stage: Int, val dueAt: Long)
+
 @Dao
 interface WordDao {
     @Query("SELECT * FROM word_books ORDER BY name, id")
@@ -86,8 +114,45 @@ interface WordDao {
     """)
     fun nextPracticeWord(bookId: Long, afterId: Long): Flow<Word?>
 
+    @Query("""
+        SELECT words.*, review_schedules.stage, review_schedules.dueAt
+        FROM words JOIN review_schedules ON review_schedules.wordId = words.id
+        WHERE words.bookId = :bookId
+        ORDER BY review_schedules.dueAt, words.id
+        LIMIT 1
+    """)
+    fun nextScheduledWord(bookId: Long): Flow<ScheduledWord?>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertFirstReview(review: FirstReview)
+    suspend fun insertFirstReview(review: FirstReview): Long
+
+    @Insert
+    suspend fun insertSchedule(schedule: ReviewSchedule)
+
+    @Insert
+    suspend fun insertReviewEvent(event: ReviewEvent)
+
+    @Query("""
+        UPDATE review_schedules SET stage = :stage, dueAt = :dueAt
+        WHERE wordId = :wordId AND dueAt = :expectedDueAt
+    """)
+    suspend fun updateSchedule(wordId: Long, expectedDueAt: Long, stage: Int, dueAt: Long): Int
+
+    @Transaction
+    suspend fun recordFirstReview(wordId: Long, rating: LearningRating, now: Long) {
+        if (insertFirstReview(FirstReview(wordId, rating.name, now)) == -1L) return
+        val stage = ReviewIntervals.firstStage(rating)
+        insertSchedule(ReviewSchedule(wordId, stage, now + ReviewIntervals.delayFor(stage)))
+    }
+
+    @Transaction
+    suspend fun recordScheduledReview(current: ScheduledWord, rating: LearningRating, now: Long) {
+        if (current.dueAt > now) return
+        val stage = ReviewIntervals.nextStage(current.stage, rating)
+        if (updateSchedule(current.word.id, current.dueAt, stage, now + ReviewIntervals.delayFor(stage)) == 1) {
+            insertReviewEvent(ReviewEvent(current.word.id, rating.name, now))
+        }
+    }
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertBook(book: WordBook): Long
@@ -97,9 +162,12 @@ interface WordDao {
 }
 
 @Database(
-    entities = [WordBook::class, Word::class, FirstReview::class],
-    version = 2,
-    autoMigrations = [AutoMigration(from = 1, to = 2)],
+    entities = [WordBook::class, Word::class, FirstReview::class, ReviewSchedule::class, ReviewEvent::class],
+    version = 3,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3, spec = SeedReviewSchedules::class),
+    ],
 )
 abstract class WordDatabase : RoomDatabase() {
     abstract fun words(): WordDao
