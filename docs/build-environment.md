@@ -11,6 +11,8 @@
 | compileSdk / targetSdk | 37 |
 | minSdk | 26（Android 8.0） |
 | AppCompat | 1.6.1 |
+| WorkManager | 2.12.0 |
+| Preferences DataStore | 1.3.0 |
 
 项目使用 AGP 内置的 Kotlin 支持。界面使用 XML，通过 ViewBinding 访问控件。
 

@@ -85,6 +85,7 @@ data class ReviewEvent(
 )
 
 data class ScheduledWord(@Embedded val word: Word, val stage: Int, val dueAt: Long)
+data class DueReviewBook(val id: Long, val name: String, val dueCount: Int)
 
 @Dao
 interface WordDao {
@@ -126,6 +127,15 @@ interface WordDao {
         LIMIT 1
     """)
     fun nextScheduledWord(bookId: Long): Flow<ScheduledWord?>
+
+    @Query("""
+        SELECT b.id, b.name, COUNT(*) AS dueCount
+        FROM review_schedules s JOIN words w ON w.id = s.wordId
+        JOIN word_books b ON b.id = w.bookId
+        WHERE s.dueAt <= :now
+        GROUP BY b.id ORDER BY MIN(s.dueAt), b.id LIMIT 1
+    """)
+    suspend fun firstDueReviewBook(now: Long): DueReviewBook?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFirstReview(review: FirstReview): Long

@@ -3,12 +3,17 @@ package com.maxiaol624.wordtrail
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.maxiaol624.wordtrail.databinding.ActivityMainBinding
+import com.maxiaol624.wordtrail.reminder.ReminderCoordinator
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,6 +26,22 @@ class MainActivity : AppCompatActivity() {
         }
         binding.openStatistics.setOnClickListener {
             startActivity(Intent(this, StatisticsActivity::class.java))
+        }
+        binding.openReminders.setOnClickListener {
+            startActivity(Intent(this, ReminderActivity::class.java))
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            try {
+                ReminderCoordinator.refresh(applicationContext)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                Log.w("ReviewReminder", "Unable to restore reminder scheduling", error)
+            }
         }
     }
 }

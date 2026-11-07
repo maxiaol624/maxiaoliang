@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/page_background">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:padding="@dimen/catalog_padding">
+        <Button android:id="@+id/back" style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/back" android:textColor="@color/accent" />
+        <TextView style="@style/StatisticsHeading" android:layout_marginTop="12dp"
+            android:text="@string/reminder_title" android:textSize="28sp" />
+        <ScrollView android:layout_width="match_parent" android:layout_height="0dp"
+            android:layout_weight="1" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:paddingBottom="16dp">
+                <TextView android:id="@+id/reminder_message" style="@style/StatisticsText"
+                    android:text="@string/catalog_loading" />
+                <Button android:id="@+id/retry" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/statistics_retry" android:visibility="gone" />
+                <LinearLayout android:id="@+id/reminder_controls" style="@style/StatisticsCard" android:visibility="gone">
+                    <androidx.appcompat.widget.SwitchCompat android:id="@+id/reminder_enabled"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:minHeight="48dp" android:text="@string/reminder_enabled"
+                        android:textColor="@color/ink" android:textSize="18sp" />
+                    <Button android:id="@+id/reminder_time" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp" />
+                    <TextView style="@style/StatisticsText" android:layout_marginTop="12dp" android:text="@string/reminder_description" />
+                    <TextView android:id="@+id/reminder_status" style="@style/StatisticsText"
+                        android:layout_marginTop="16dp" android:textColor="@color/ink" />
+                    <Button android:id="@+id/notification_permission" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp" android:visibility="gone" />
+                </LinearLayout>
+                <Button android:id="@+id/open_books" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" android:text="@string/open_books" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>

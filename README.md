@@ -18,21 +18,22 @@
 
 词本中的「单词测试」采用四选一，每轮从当前词本随机抽取最多 10 个单词，至少需要 4 种不同释义。答题后显示正确释义，中途退出可继续。完成整轮后保存成绩，可以从最近成绩重看错题。学习统计展示完成轮数和累计测试正确率。
 
+首页的「复习提醒」可以开启每日提醒并选择时间。到设定时间后，后台检查有到期单词才发通知，每天最多提醒一次。点击通知进入对应词本的到期复习。系统未允许通知时，仍可从词本手动复习。
+
 后续开发内容：
 
 - CSV 词表导入与导出。
-- 每日复习提醒及通知权限处理。
 - 桌面小组件，显示今日任务并提供学习入口。
 
 ## 技术方案
 
-界面使用 Kotlin、XML、AppCompat 和 ViewBinding。词本页面通过 ViewModel 读取 Room 数据，数据库变动后列表会自动更新。提醒和小组件按后续计划接入。
+界面使用 Kotlin、XML、AppCompat 和 ViewBinding。词本页面通过 ViewModel 读取 Room 数据，数据库变动后列表会自动更新。提醒设置由 DataStore 保存，WorkManager 负责后台检查到期词。
 
 | 部分 | 选用技术 |
 | --- | --- |
 | 页面状态与异步处理 | ViewModel、协程、Flow |
 | 单词与学习记录 | Room |
-| 学习目标及提醒设置 | DataStore |
+| 提醒设置 | DataStore |
 | 后台检查与提醒 | WorkManager、系统通知 |
 | 桌面小组件 | AppWidgetProvider、RemoteViews |
 
@@ -70,3 +71,4 @@ WordTrail/
 - [构建环境与验证记录](docs/build-environment.md)
 - [学习统计的计算规则](docs/statistics.md)
 - [单词测试的流程与保存](docs/quiz.md)
+- [复习提醒的设置与排程](docs/reminders.md)

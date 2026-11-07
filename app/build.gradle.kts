@@ -30,6 +30,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.room:room-runtime:2.8.5")
+    implementation("androidx.work:work-runtime:2.12.0")
+    implementation("androidx.datastore:datastore-preferences:1.3.0")
     ksp("androidx.room:room-compiler:2.8.5")
     testImplementation("junit:junit:4.13.2")
 }
