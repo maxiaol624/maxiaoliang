@@ -166,6 +166,25 @@ class StatisticsCalculatorTest {
         assertEquals(StageDistribution(2, 2, 2), report.stages)
     }
 
+    @Test
+    fun completedTestsContributeToStreakAndAccuracyWithoutChangingLearningCounts() {
+        val source = StatisticsSource(emptyList(), emptyList(), emptyList(), listOf(
+            TestScore(now - 1, 4, 4),
+            TestScore(local("2026-11-06T12:00:00"), 6, 3),
+            TestScore(now + 1, 10, 10),
+        ))
+        val report = StatisticsCalculator.calculate(source, now, shanghai)
+        assertEquals(1, report.todayTests)
+        assertEquals(2, report.testSessions)
+        assertEquals(10, report.testQuestions)
+        assertEquals(7, report.testCorrect)
+        assertEquals(2, report.streakDays)
+        assertEquals(0, report.totalLearned)
+        assertEquals(0, report.todayNew)
+        assertEquals(0, report.todayReviews)
+        assertEquals(0, report.dueNow)
+    }
+
     private fun calculate(
         words: List<StatisticsWord> = emptyList(),
         reviews: List<Long> = emptyList(),

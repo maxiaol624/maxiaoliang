@@ -23,7 +23,7 @@
     <string name="statistics_book_due">待复习 %1$d 词</string>
     <string name="statistics_open_book">打开词本</string>
     <string name="statistics_rules_title">这些数字怎么算</string>
-    <string name="statistics_rules">新学按首次提交反馈的词数计算，复习按到期反馈的次数计算。「再练一遍」不重复计入。\n\n已学表示完成过首次学习。连续学习以今天或昨天为末日，统计连续有新学或复习记录的天数。日期按手机当前时区划分。</string>
+    <string name="statistics_rules">新学按首次提交反馈的词数计算，复习按到期反馈的次数计算。「再练一遍」不重复计入。\n\n测试仅计完成的整轮，正确率为所有已完成测试的答对题数除以总题数。\n\n已学表示完成过首次学习。连续学习以今天或昨天为末日，统计连续有新学、复习或完成测试记录的天数。日期按手机当前时区划分。</string>
     <string name="statistics_error">暂时无法读取学习记录，请重试。</string>
     <string name="statistics_retry">重新读取</string>
 

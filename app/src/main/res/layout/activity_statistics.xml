@@ -140,6 +140,12 @@
                         android:text="@string/statistics_stage_hint" />
                 </LinearLayout>
 
+                <LinearLayout style="@style/StatisticsCard">
+                    <TextView style="@style/StatisticsHeading" android:text="@string/statistics_tests" />
+                    <TextView android:id="@+id/test_summary" style="@style/StatisticsText"
+                        android:layout_marginTop="12dp" android:lineSpacingExtra="6dp" />
+                </LinearLayout>
+
                 <TextView
                     style="@style/StatisticsHeading"
                     android:layout_marginTop="24dp"

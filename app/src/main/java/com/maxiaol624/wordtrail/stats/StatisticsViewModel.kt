@@ -39,6 +39,7 @@ class StatisticsViewModel(application: Application) : AndroidViewModel(applicati
         }
         return database.invalidationTracker.createFlow(
             "word_books", "words", "first_reviews", "review_schedules", "review_events",
+            "quiz_sessions", "quiz_questions",
             emitInitialState = true,
         ).map { database.statistics().snapshot() }
             .combine(clock) { source, (now, zone) -> StatisticsCalculator.calculate(source, now, zone) }

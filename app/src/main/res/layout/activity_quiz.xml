@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/page_background">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:padding="@dimen/catalog_padding">
+        <Button android:id="@+id/back" style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/back" android:textColor="@color/accent" />
+        <TextView android:id="@+id/page_title" style="@style/StatisticsHeading"
+            android:layout_marginTop="12dp" android:text="@string/quiz_title" android:textSize="28sp" />
+        <ScrollView android:id="@+id/quiz_scroll" android:layout_width="match_parent"
+            android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:paddingBottom="16dp">
+                <TextView android:id="@+id/message" style="@style/StatisticsText" android:text="@string/catalog_loading" />
+                <Button android:id="@+id/retry" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/statistics_retry" android:visibility="gone" />
+                <LinearLayout android:id="@+id/lobby" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:visibility="gone">
+                    <LinearLayout style="@style/StatisticsCard">
+                        <TextView android:id="@+id/book_name" style="@style/StatisticsHeading" />
+                        <TextView style="@style/StatisticsText" android:layout_marginTop="12dp" android:text="@string/quiz_intro" />
+                        <TextView style="@style/StatisticsText" android:layout_marginTop="12dp" android:text="@string/quiz_scope" />
+                        <TextView android:id="@+id/insufficient" style="@style/StatisticsText" android:layout_marginTop="12dp" />
+                        <Button android:id="@+id/start_quiz" android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp" android:text="@string/quiz_start" />
+                    </LinearLayout>
+                    <TextView style="@style/StatisticsHeading" android:layout_marginTop="24dp" android:text="@string/quiz_history" />
+                    <TextView android:id="@+id/no_history" style="@style/StatisticsText" android:layout_marginTop="12dp"
+                        android:text="@string/quiz_no_history" />
+                    <LinearLayout android:id="@+id/history_rows" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/question_card" style="@style/StatisticsCard" android:visibility="gone">
+                    <TextView android:id="@+id/question_progress" style="@style/StatisticsText" />
+                    <TextView android:id="@+id/quiz_term" style="@style/StatisticsHeading"
+                        android:layout_marginTop="20dp" android:textSize="30sp" />
+                    <Button android:id="@+id/option_a" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp" android:textAllCaps="false" />
+                    <Button android:id="@+id/option_b" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="false" />
+                    <Button android:id="@+id/option_c" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="false" />
+                    <Button android:id="@+id/option_d" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="false" />
+                    <TextView android:id="@+id/answer_feedback" style="@style/StatisticsText"
+                        android:layout_marginTop="16dp" android:textColor="@color/ink" android:lineSpacingExtra="4dp" />
+                    <Button android:id="@+id/next_question" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp" android:text="@string/quiz_next" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/result" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:visibility="gone">
+                    <LinearLayout style="@style/StatisticsCard">
+                        <TextView style="@style/StatisticsHeading" android:text="@string/quiz_result" />
+                        <TextView android:id="@+id/score" style="@style/StatisticsHeading"
+                            android:layout_marginTop="16dp" android:textSize="26sp" android:lineSpacingExtra="8dp" />
+                        <TextView android:id="@+id/completed_at" style="@style/StatisticsText" android:layout_marginTop="12dp" />
+                        <Button android:id="@+id/restart_quiz" android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp" android:text="@string/quiz_restart" />
+                        <Button android:id="@+id/back_lobby" android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:text="@string/quiz_back_lobby" />
+                    </LinearLayout>
+                    <TextView style="@style/StatisticsHeading" android:layout_marginTop="24dp" android:text="@string/quiz_wrong_title" />
+                    <TextView android:id="@+id/all_correct" style="@style/StatisticsText" android:layout_marginTop="12dp" android:text="@string/quiz_all_correct" />
+                    <LinearLayout android:id="@+id/wrong_rows" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>

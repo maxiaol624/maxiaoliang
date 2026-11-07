@@ -14,6 +14,7 @@ import com.maxiaol624.wordtrail.databinding.StatisticsDayBinding
 import com.maxiaol624.wordtrail.stats.StatisticsReport
 import com.maxiaol624.wordtrail.stats.StatisticsState
 import com.maxiaol624.wordtrail.stats.StatisticsViewModel
+import com.maxiaol624.wordtrail.quiz.QuizGenerator
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.launch
 
@@ -61,6 +62,9 @@ class StatisticsActivity : AppCompatActivity() {
         binding.statisticsEmpty.isVisible = report.totalWords == 0
         binding.createBooks.isVisible = report.totalWords == 0
         binding.noBooks.isVisible = report.books.isEmpty()
+        binding.testSummary.text = if (report.testSessions == 0) getString(R.string.statistics_test_empty)
+        else getString(R.string.statistics_test_summary, report.todayTests, report.testSessions,
+            report.testCorrect, report.testQuestions, QuizGenerator.percentage(report.testCorrect, report.testQuestions))
 
         val chartMax = report.week.maxOf { maxOf(it.newWords, it.reviews) }.coerceAtLeast(1)
         binding.weekRows.removeAllViews()

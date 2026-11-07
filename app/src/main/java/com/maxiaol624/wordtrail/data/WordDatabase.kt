@@ -17,6 +17,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import com.maxiaol624.wordtrail.stats.StatisticsDao
+import com.maxiaol624.wordtrail.quiz.QuizDao
+import com.maxiaol624.wordtrail.quiz.QuizSession
+import com.maxiaol624.wordtrail.quiz.QuizQuestion
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "word_books", indices = [Index(value = ["name"], unique = true)])
@@ -163,16 +166,19 @@ interface WordDao {
 }
 
 @Database(
-    entities = [WordBook::class, Word::class, FirstReview::class, ReviewSchedule::class, ReviewEvent::class],
-    version = 3,
+    entities = [WordBook::class, Word::class, FirstReview::class, ReviewSchedule::class, ReviewEvent::class,
+        QuizSession::class, QuizQuestion::class],
+    version = 4,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3, spec = SeedReviewSchedules::class),
+        AutoMigration(from = 3, to = 4),
     ],
 )
 abstract class WordDatabase : RoomDatabase() {
     abstract fun words(): WordDao
     abstract fun statistics(): StatisticsDao
+    abstract fun quizzes(): QuizDao
 
     companion object {
         @Volatile

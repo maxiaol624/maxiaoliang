@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quiz_title">单词测试</string>
+    <string name="quiz_intro">根据单词选择正确释义，每轮随机抽取最多 10 题。答题后显示答案，完成整轮后记录成绩。</string>
+    <string name="quiz_scope">范围为当前词本的全部词条，包含未学词。测试成绩单独保存。</string>
+    <string name="quiz_insufficient">至少需要 4 种不同释义，当前有 %1$d 种。请返回词本补充词条。</string>
+    <string name="quiz_start">开始测试</string>
+    <string name="quiz_resume">继续上次测试</string>
+    <string name="quiz_history">最近成绩</string>
+    <string name="quiz_no_history">还没有完成的测试。答题会自动保存，中途退出后可以继续。</string>
+    <string name="quiz_progress">第 %1$d / %2$d 题 · 选择正确释义</string>
+    <string name="quiz_option">%1$s. %2$s</string>
+    <string name="quiz_correct">答对了\n正确释义：%1$s</string>
+    <string name="quiz_wrong">这次选错了\n你的选择：%1$s\n正确释义：%2$s</string>
+    <string name="quiz_next">下一题</string>
+    <string name="quiz_finish">查看成绩</string>
+    <string name="quiz_result">本轮成绩</string>
+    <string name="quiz_score">%1$d 分\n答对 %2$d / %3$d 题</string>
+    <string name="quiz_wrong_title">错题回顾</string>
+    <string name="quiz_all_correct">本轮全部答对，继续保持。</string>
+    <string name="quiz_wrong_row">%1$s\n你的选择：%2$s\n正确释义：%3$s</string>
+    <string name="quiz_restart">再测一轮</string>
+    <string name="quiz_back_lobby">返回测试首页</string>
+    <string name="quiz_history_row">%1$s\n%2$d 分 · 答对 %3$d / %4$d 题</string>
+    <string name="quiz_saving">正在保存答案…</string>
+    <string name="quiz_save_failed">保存失败，当前答案尚未提交，请重试。</string>
+    <string name="quiz_read_failed">暂时无法读取测试，请重试或返回。</string>
+    <string name="statistics_tests">测试表现</string>
+    <string name="statistics_test_empty">还没有完成的测试。可从词本进入「单词测试」。</string>
+    <string name="statistics_test_summary">今日完成 %1$d 轮 · 累计 %2$d 轮\n答对 %3$d / %4$d 题 · 正确率 %5$d%%</string>
+</resources>

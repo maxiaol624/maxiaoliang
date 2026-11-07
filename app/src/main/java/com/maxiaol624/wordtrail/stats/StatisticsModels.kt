@@ -16,7 +16,10 @@ data class StatisticsSource(
     val books: List<StatisticsBook>,
     val words: List<StatisticsWord>,
     val reviewTimes: List<Long>,
+    val tests: List<TestScore> = emptyList(),
 )
+
+data class TestScore(val completedAt: Long, val total: Int, val correct: Int)
 
 data class DailyStudy(val date: LocalDate, val newWords: Int, val reviews: Int)
 
@@ -45,6 +48,10 @@ data class StatisticsReport(
     val week: List<DailyStudy>,
     val books: List<BookProgress>,
     val stages: StageDistribution,
+    val todayTests: Int,
+    val testSessions: Int,
+    val testQuestions: Int,
+    val testCorrect: Int,
 )
 
 sealed interface StatisticsState {

@@ -22,7 +22,15 @@ interface StatisticsDao {
     @Query("SELECT reviewedAt FROM review_events")
     suspend fun reviewTimes(): List<Long>
 
-    // 一次读取同一份数据库快照，避免学习保存时三个查询读到不同状态。
+    @Query("""
+        SELECT s.completedAt, COUNT(*) AS total,
+            SUM(CASE WHEN q.selectedIndex = q.correctIndex THEN 1 ELSE 0 END) AS correct
+        FROM quiz_sessions s JOIN quiz_questions q ON q.sessionId = s.id
+        WHERE s.completedAt IS NOT NULL GROUP BY s.id
+    """)
+    suspend fun tests(): List<TestScore>
+
+    // 一次读取同一份数据库快照，避免学习保存时多个查询读到不同状态。
     @Transaction
-    suspend fun snapshot() = StatisticsSource(books(), words(), reviewTimes())
+    suspend fun snapshot() = StatisticsSource(books(), words(), reviewTimes(), tests())
 }

@@ -8,6 +8,7 @@
         <activity android:name=".CatalogActivity" android:exported="false" />
         <activity android:name=".StudyActivity" android:exported="false" />
         <activity android:name=".StatisticsActivity" android:exported="false" />
+        <activity android:name=".QuizActivity" android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

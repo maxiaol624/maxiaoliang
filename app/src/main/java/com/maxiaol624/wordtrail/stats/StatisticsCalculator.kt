@@ -14,7 +14,9 @@ object StatisticsCalculator {
         val newByDay = learned.groupingBy { day(requireNotNull(it.firstReviewedAt)) }.eachCount()
         val reviewByDay = source.reviewTimes.asSequence().filter { it <= now }
             .groupingBy(::day).eachCount()
-        val activeDays = newByDay.keys + reviewByDay.keys
+        val tests = source.tests.filter { it.completedAt <= now }
+        val testsByDay = tests.groupingBy { day(it.completedAt) }.eachCount()
+        val activeDays = newByDay.keys + reviewByDay.keys + testsByDay.keys
         var cursor = if (today in activeDays) today else today.minusDays(1)
         var streak = 0
         while (cursor in activeDays) {
@@ -52,6 +54,10 @@ object StatisticsCalculator {
                 consolidating = learned.count { it.stage in 2..3 },
                 longInterval = learned.count { it.stage in 4..5 },
             ),
+            todayTests = testsByDay[today] ?: 0,
+            testSessions = tests.size,
+            testQuestions = tests.sumOf { it.total },
+            testCorrect = tests.sumOf { it.correct },
         )
     }
 }
