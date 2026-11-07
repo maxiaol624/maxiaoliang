@@ -19,6 +19,9 @@ class MainActivity : AppCompatActivity() {
         binding.openBooks.setOnClickListener {
             startActivity(Intent(this, CatalogActivity::class.java))
         }
+        binding.openStatistics.setOnClickListener {
+            startActivity(Intent(this, StatisticsActivity::class.java))
+        }
     }
 }
 

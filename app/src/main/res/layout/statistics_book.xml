@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/StatisticsCard"
+    android:layout_marginTop="12dp">
+
+    <TextView android:id="@+id/book_name" style="@style/StatisticsHeading" />
+    <TextView
+        android:id="@+id/progress_summary"
+        style="@style/StatisticsText"
+        android:layout_marginTop="12dp" />
+    <ProgressBar
+        android:id="@+id/book_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_marginTop="8dp"
+        android:importantForAccessibility="no"
+        android:progressTint="@color/accent"
+        android:progressBackgroundTint="@color/progress_track" />
+    <TextView
+        android:id="@+id/book_due"
+        style="@style/StatisticsText"
+        android:layout_marginTop="8dp" />
+    <Button
+        android:id="@+id/open_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/statistics_open_book" />
+</LinearLayout>

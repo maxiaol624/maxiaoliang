@@ -1,5 +1,6 @@
 package com.maxiaol624.wordtrail
 
+import android.content.Context
 import android.content.Intent
 import android.database.sqlite.SQLiteException
 import android.os.Bundle
@@ -52,7 +53,7 @@ class CatalogActivity : AppCompatActivity() {
         observe(model.books) { books ->
             binding.add.isVisible = true
             renderList(books, R.string.no_books, { it.name }) { book ->
-                startActivity(Intent(this, CatalogActivity::class.java).putExtra(EXTRA_BOOK_ID, book.id))
+                startActivity(bookIntent(this, book.id))
             }
         }
     }
@@ -192,8 +193,11 @@ class CatalogActivity : AppCompatActivity() {
         }
     }
 
-    private companion object {
-        const val EXTRA_BOOK_ID = "bookId"
-        const val EXTRA_WORD_ID = "wordId"
+    companion object {
+        private const val EXTRA_BOOK_ID = "bookId"
+        private const val EXTRA_WORD_ID = "wordId"
+
+        fun bookIntent(context: Context, bookId: Long) =
+            Intent(context, CatalogActivity::class.java).putExtra(EXTRA_BOOK_ID, bookId)
     }
 }

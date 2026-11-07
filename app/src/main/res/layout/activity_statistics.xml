@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/page_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/catalog_padding">
+
+        <Button
+            android:id="@+id/back"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/back"
+            android:textColor="@color/accent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/statistics_title"
+            android:textColor="@color/ink"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/message"
+            style="@style/StatisticsText"
+            android:layout_marginTop="20dp"
+            android:text="@string/catalog_loading" />
+
+        <Button
+            android:id="@+id/retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/statistics_retry"
+            android:visibility="gone" />
+
+        <ScrollView
+            android:id="@+id/statistics_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="12dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="12dp">
+
+                <TextView android:id="@+id/date_label" style="@style/StatisticsText" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView android:id="@+id/today_new" style="@style/StatisticsMetric" />
+                        <TextView
+                            android:id="@+id/streak_days"
+                            style="@style/StatisticsMetric"
+                            android:layout_marginTop="12dp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView android:id="@+id/today_reviews" style="@style/StatisticsMetric" />
+                        <TextView
+                            android:id="@+id/due_now"
+                            style="@style/StatisticsMetric"
+                            android:layout_marginTop="12dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout style="@style/StatisticsCard">
+                    <TextView android:id="@+id/overall_summary" style="@style/StatisticsHeading" />
+                    <ProgressBar
+                        android:id="@+id/overall_progress"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="12dp"
+                        android:importantForAccessibility="no"
+                        android:progressTint="@color/accent"
+                        android:progressBackgroundTint="@color/progress_track" />
+                    <TextView
+                        android:id="@+id/statistics_empty"
+                        style="@style/StatisticsText"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/statistics_empty"
+                        android:visibility="gone" />
+                    <Button
+                        android:id="@+id/create_books"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/open_books"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/StatisticsCard">
+                    <TextView style="@style/StatisticsHeading" android:text="@string/statistics_week" />
+                    <TextView
+                        style="@style/StatisticsText"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/statistics_legend" />
+                    <LinearLayout
+                        android:id="@+id/week_rows"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/StatisticsCard">
+                    <TextView style="@style/StatisticsHeading" android:text="@string/statistics_stages" />
+                    <TextView
+                        android:id="@+id/stage_summary"
+                        style="@style/StatisticsText"
+                        android:layout_marginTop="12dp"
+                        android:lineSpacingExtra="10dp"
+                        android:textColor="@color/ink" />
+                    <TextView
+                        style="@style/StatisticsText"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/statistics_stage_hint" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/StatisticsHeading"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/statistics_books" />
+                <TextView
+                    android:id="@+id/no_books"
+                    style="@style/StatisticsText"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/statistics_no_books" />
+                <LinearLayout
+                    android:id="@+id/book_rows"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <LinearLayout style="@style/StatisticsCard">
+                    <TextView style="@style/StatisticsHeading" android:text="@string/statistics_rules_title" />
+                    <TextView
+                        style="@style/StatisticsText"
+                        android:layout_marginTop="12dp"
+                        android:lineSpacingExtra="4dp"
+                        android:text="@string/statistics_rules" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>

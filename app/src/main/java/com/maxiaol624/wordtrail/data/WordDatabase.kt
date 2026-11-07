@@ -16,6 +16,7 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
+import com.maxiaol624.wordtrail.stats.StatisticsDao
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "word_books", indices = [Index(value = ["name"], unique = true)])
@@ -171,6 +172,7 @@ interface WordDao {
 )
 abstract class WordDatabase : RoomDatabase() {
     abstract fun words(): WordDao
+    abstract fun statistics(): StatisticsDao
 
     companion object {
         @Volatile

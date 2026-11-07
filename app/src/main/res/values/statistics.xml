@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="review_chart">#A37826</color>
+    <color name="progress_track">#E3E9E3</color>
+    <string name="open_statistics">查看学习统计</string>
+    <string name="statistics_title">学习统计</string>
+    <string name="statistics_date">%1$s · 每一点积累都算数</string>
+    <string name="statistics_today_new">今日新学\n%1$d 词</string>
+    <string name="statistics_today_reviews">今日复习\n%1$d 次</string>
+    <string name="statistics_streak">连续学习\n%1$d 天</string>
+    <string name="statistics_due">待复习\n%1$d 词</string>
+    <string name="statistics_overall">已学 %1$d / %2$d 词 · %3$d%%</string>
+    <string name="statistics_empty">还没有单词。先建一个词本，完成学习后就能在这里看到进步。</string>
+    <string name="statistics_no_books">暂无词本进度。</string>
+    <string name="statistics_week">近 7 天学习量</string>
+    <string name="statistics_legend">绿条为新学词数，黄条为复习次数。</string>
+    <string name="statistics_day_counts">%1$d 词新学 · %2$d 次复习</string>
+    <string name="statistics_today">今天</string>
+    <string name="statistics_stages">复习阶段</string>
+    <string name="statistics_stage_summary">需加强（10 分钟～1 天）　%1$d 词\n巩固中（3～7 天）　%2$d 词\n长间隔（14～30 天）　%3$d 词</string>
+    <string name="statistics_stage_hint">按当前复习间隔分组，用来了解学习分布，不代表已经永久记住。</string>
+    <string name="statistics_books">词本进度</string>
+    <string name="statistics_book_due">待复习 %1$d 词</string>
+    <string name="statistics_open_book">打开词本</string>
+    <string name="statistics_rules_title">这些数字怎么算</string>
+    <string name="statistics_rules">新学按首次提交反馈的词数计算，复习按到期反馈的次数计算。「再练一遍」不重复计入。\n\n已学表示完成过首次学习。连续学习以今天或昨天为末日，统计连续有新学或复习记录的天数。日期按手机当前时区划分。</string>
+    <string name="statistics_error">暂时无法读取学习记录，请重试。</string>
+    <string name="statistics_retry">重新读取</string>
+
+    <style name="StatisticsText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/ink_secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="StatisticsHeading" parent="StatisticsText">
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="StatisticsMetric" parent="StatisticsText">
+        <item name="android:background">@drawable/card_background</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:lineSpacingExtra">6dp</item>
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="StatisticsCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:background">@drawable/card_background</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">20dp</item>
+    </style>
+</resources>
