@@ -9,6 +9,7 @@ import android.text.InputType
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.LinearLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -24,6 +25,14 @@ import kotlinx.coroutines.launch
 class CatalogActivity : AppCompatActivity() {
     private val model by lazy { ViewModelProvider(this)[CatalogViewModel::class.java] }
     private lateinit var binding: ActivityCatalogBinding
+    private val importCsv = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        val bookId = intent.getLongExtra(EXTRA_BOOK_ID, 0)
+        if (uri != null && bookId > 0) model.importCsv(bookId, uri)
+    }
+    private val exportCsv = registerForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri ->
+        val bookId = intent.getLongExtra(EXTRA_BOOK_ID, 0)
+        if (uri != null && bookId > 0) model.exportCsv(bookId, uri)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +77,24 @@ class CatalogActivity : AppCompatActivity() {
             startActivity(StudyActivity.intent(this, bookId, review = true))
         }
         binding.quiz.setOnClickListener { startActivity(QuizActivity.intent(this, bookId)) }
+        binding.csvActions.setOnClickListener { showCsvActions() }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                model.csvTransfer.collect { state ->
+                    val working = state is CatalogViewModel.CsvTransfer.Working
+                    binding.csvActions.isEnabled = !working
+                    binding.csvActions.setText(if (working) R.string.csv_working else R.string.csv_actions)
+                    if (state is CatalogViewModel.CsvTransfer.Result) {
+                        model.acknowledgeCsvResult()
+                        AlertDialog.Builder(this@CatalogActivity)
+                            .setTitle(R.string.csv_actions)
+                            .setMessage(state.message)
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show()
+                    }
+                }
+            }
+        }
         binding.add.setOnClickListener {
             showEditor(
                 R.string.add_word, R.string.word_term, R.string.word_exists, hasMeaning = true,
@@ -83,6 +110,7 @@ class CatalogActivity : AppCompatActivity() {
                 binding.study.isVisible = contents.words.isNotEmpty()
                 binding.review.isVisible = contents.words.isNotEmpty()
                 binding.quiz.isVisible = true
+                binding.csvActions.isVisible = true
                 renderList(contents.words, R.string.no_words, { it.term }) { word ->
                     startActivity(Intent(this, CatalogActivity::class.java).putExtra(EXTRA_WORD_ID, word.id))
                 }
@@ -100,6 +128,13 @@ class CatalogActivity : AppCompatActivity() {
                 binding.detail.isVisible = true
                 binding.term.text = word.term
                 binding.meaning.text = word.meaning
+                val details = listOf(
+                    R.string.csv_phonetic to word.phonetic,
+                    R.string.csv_example to word.example,
+                    R.string.csv_translation to word.exampleTranslation,
+                ).filter { it.second.isNotBlank() }
+                binding.extraDetails.isVisible = details.isNotEmpty()
+                binding.extraDetails.text = details.joinToString("\n\n") { (label, value) -> getString(label, value) }
             }
         }
     }
@@ -126,10 +161,28 @@ class CatalogActivity : AppCompatActivity() {
         binding.study.isVisible = false
         binding.review.isVisible = false
         binding.quiz.isVisible = false
+        binding.csvActions.isVisible = false
         binding.list.isVisible = false
         binding.detail.isVisible = false
         binding.message.isVisible = true
         binding.message.setText(text)
+    }
+
+    private fun showCsvActions() {
+        val choices = arrayOf(getString(R.string.csv_import), getString(R.string.csv_export))
+        AlertDialog.Builder(this)
+            .setTitle(R.string.csv_actions)
+            .setItems(choices) { _, index ->
+                if (index == 0) {
+                    importCsv.launch(arrayOf("text/*", "application/csv", "application/vnd.ms-excel", "application/octet-stream"))
+                } else {
+                    val name = binding.pageTitle.text.toString().map { char ->
+                        if (char in "/\\:*?\"<>|" || char.isISOControl()) '_' else char
+                    }.joinToString("").trim().trim('.')
+                    exportCsv.launch((name.ifEmpty { "WordTrail" }) + ".csv")
+                }
+            }
+            .show()
     }
 
     private fun showEditor(

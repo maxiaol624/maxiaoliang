@@ -43,6 +43,9 @@ data class Word(
     @ColumnInfo(collate = ColumnInfo.NOCASE) val term: String,
     val meaning: String,
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(defaultValue = "''") val phonetic: String = "",
+    @ColumnInfo(defaultValue = "''") val example: String = "",
+    @ColumnInfo(defaultValue = "''") val exampleTranslation: String = "",
 )
 
 @Entity(
@@ -173,16 +176,20 @@ interface WordDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertWord(word: Word): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertWords(words: List<Word>): List<Long>
 }
 
 @Database(
     entities = [WordBook::class, Word::class, FirstReview::class, ReviewSchedule::class, ReviewEvent::class,
         QuizSession::class, QuizQuestion::class],
-    version = 4,
+    version = 5,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3, spec = SeedReviewSchedules::class),
         AutoMigration(from = 3, to = 4),
+        AutoMigration(from = 4, to = 5),
     ],
 )
 abstract class WordDatabase : RoomDatabase() {
