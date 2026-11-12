@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">词迹 · 今日学习</string>
+    <string name="widget_title">词迹 · 今日</string>
+    <string name="widget_empty">词迹 · 添加单词开始</string>
+    <string name="widget_description">查看今日新学和待复习词数，快速打开学习队列。</string>
+    <string name="widget_add">添加桌面小组件</string>
+    <string name="widget_add_manually">长按桌面空白处，选择小组件，在「词迹」下添加。</string>
+    <string name="widget_learned_label">今日新学</string>
+    <string name="widget_due_label">待复习</string>
+    <string name="widget_count">%1$d 词</string>
+    <string name="widget_loading_count">—</string>
+    <string name="widget_learn">学新词</string>
+    <string name="widget_review">去复习</string>
+    <color name="widget_background">#EDF4E9</color>
+</resources>

@@ -11,6 +11,17 @@
         <activity android:name=".StatisticsActivity" android:exported="false" />
         <activity android:name=".QuizActivity" android:exported="false" />
         <activity android:name=".ReminderActivity" android:exported="false" />
+        <receiver
+            android:name=".widget.StudyWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_study_info" />
+        </receiver>
         <receiver android:name=".reminder.ReminderClockReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />

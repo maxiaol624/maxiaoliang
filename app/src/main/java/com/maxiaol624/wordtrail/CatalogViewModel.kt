@@ -10,6 +10,7 @@ import com.maxiaol624.wordtrail.data.Word
 import com.maxiaol624.wordtrail.data.WordBook
 import com.maxiaol624.wordtrail.data.WordDatabase
 import com.maxiaol624.wordtrail.data.WordCsv
+import com.maxiaol624.wordtrail.widget.StudyWidgetProvider
 import java.io.IOException
 import java.io.InputStreamReader
 import kotlinx.coroutines.CancellationException
@@ -38,17 +39,22 @@ class CatalogViewModel(private val application: Application) : AndroidViewModel(
 
     suspend fun recordFirstReview(wordId: Long, rating: LearningRating) {
         dao.recordFirstReview(wordId, rating, System.currentTimeMillis())
+        StudyWidgetProvider.requestRefresh(application)
     }
 
     fun nextScheduledWord(bookId: Long) = dao.nextScheduledWord(bookId)
 
-    suspend fun recordScheduledReview(current: ScheduledWord, rating: LearningRating) =
+    suspend fun recordScheduledReview(current: ScheduledWord, rating: LearningRating) {
         dao.recordScheduledReview(current, rating, System.currentTimeMillis())
+        StudyWidgetProvider.requestRefresh(application)
+    }
 
     suspend fun addBook(name: String) = dao.insertBook(WordBook(name)) != -1L
 
     suspend fun addWord(bookId: Long, term: String, meaning: String) =
-        dao.insertWord(Word(bookId, term, meaning)) != -1L
+        (dao.insertWord(Word(bookId, term, meaning)) != -1L).also { inserted ->
+            if (inserted) StudyWidgetProvider.requestRefresh(application)
+        }
 
     private val transfer = MutableStateFlow<CsvTransfer>(CsvTransfer.Idle)
     val csvTransfer = transfer.asStateFlow()
@@ -59,6 +65,7 @@ class CatalogViewModel(private val application: Application) : AndroidViewModel(
             WordCsv.read(it, bookId)
         }
         val inserted = if (parsed.words.isEmpty()) 0 else dao.insertWords(parsed.words).count { it != -1L }
+        if (inserted > 0) StudyWidgetProvider.requestRefresh(application)
         application.getString(R.string.csv_import_result, inserted, parsed.words.size - inserted, parsed.invalid)
     }
 

@@ -20,6 +20,7 @@ import com.maxiaol624.wordtrail.stats.StatisticsDao
 import com.maxiaol624.wordtrail.quiz.QuizDao
 import com.maxiaol624.wordtrail.quiz.QuizSession
 import com.maxiaol624.wordtrail.quiz.QuizQuestion
+import com.maxiaol624.wordtrail.widget.WidgetDao
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "word_books", indices = [Index(value = ["name"], unique = true)])
@@ -196,6 +197,7 @@ abstract class WordDatabase : RoomDatabase() {
     abstract fun words(): WordDao
     abstract fun statistics(): StatisticsDao
     abstract fun quizzes(): QuizDao
+    abstract fun widget(): WidgetDao
 
     companion object {
         @Volatile
