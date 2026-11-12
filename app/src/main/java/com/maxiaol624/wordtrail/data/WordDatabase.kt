@@ -185,6 +185,13 @@ interface WordDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertBook(book: WordBook): Long
 
+    @Transaction
+    suspend fun insertSampleBook(book: WordBook, words: List<Word>): Long {
+        val id = insertBook(book)
+        if (id != -1L) insertWords(words.map { it.copy(bookId = id) })
+        return id
+    }
+
     @Query("UPDATE word_books SET name = :name WHERE id = :id")
     suspend fun renameBook(id: Long, name: String): Int
 

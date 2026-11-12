@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:focusableInTouchMode="true"
         android:padding="@dimen/catalog_padding">
 
         <Button
@@ -27,6 +28,17 @@
             android:textSize="28sp"
             android:textStyle="bold" />
 
+        <EditText
+            android:id="@+id/word_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/word_search"
+            android:inputType="text"
+            android:maxLines="1"
+            android:saveEnabled="false"
+            android:visibility="gone" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -40,6 +52,7 @@
                 android:divider="@android:color/transparent"
                 android:dividerHeight="8dp"
                 android:drawSelectorOnTop="true"
+                android:saveEnabled="false"
                 android:visibility="gone" />
 
             <TextView
@@ -171,6 +184,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
+                android:visibility="gone" />
+            <Button
+                android:id="@+id/add_sample_book"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="@string/add_sample_book"
                 android:visibility="gone" />
             <Button
                 android:id="@+id/csv_actions"

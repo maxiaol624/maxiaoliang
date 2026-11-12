@@ -48,13 +48,19 @@ interface QuizDao {
     @Insert
     suspend fun insertQuestions(questions: List<QuizQuestion>)
 
+    @Query("DELETE FROM quiz_sessions WHERE id = :id AND bookId = :bookId AND completedAt IS NULL")
+    suspend fun deleteUnfinished(id: String, bookId: Long): Int
+
     @Transaction
-    suspend fun startOrResume(bookId: Long, now: Long): String? {
-        activeId(bookId)?.let { return it }
+    suspend fun startOrResume(bookId: Long, now: Long, replaceUnfinishedId: String? = null): String? {
+        val active = activeId(bookId)
+        if (replaceUnfinishedId == null && active != null) return active
+        if (replaceUnfinishedId != null && active != replaceUnfinishedId) return null
         if (bookName(bookId) == null) return null
         val id = UUID.randomUUID().toString()
         val questions = QuizGenerator.generate(id, words(bookId))
         if (questions.isEmpty()) return null
+        if (replaceUnfinishedId != null && deleteUnfinished(replaceUnfinishedId, bookId) != 1) return null
         insertSession(QuizSession(id, bookId, now))
         insertQuestions(questions)
         return id

@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -53,6 +54,15 @@ class QuizActivity : AppCompatActivity() {
         if (model.route.value.sessionId == null) finish() else model.showLobby()
     }
 
+    private fun confirmNewQuiz(unfinishedId: String) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.quiz_replace_title)
+            .setMessage(R.string.quiz_replace_message)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.quiz_replace_confirm) { _, _ -> model.start(unfinishedId) }
+            .show()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("sessionId", model.route.value.sessionId)
         outState.putInt("position", model.route.value.position)
@@ -76,11 +86,18 @@ class QuizActivity : AppCompatActivity() {
         when (page) {
             is QuizPage.Lobby -> {
                 binding.bookName.text = page.data.name ?: getString(R.string.book_missing)
-                val canStart = page.data.name != null && (page.data.meaningCount >= 4 || page.data.activeId != null)
-                binding.insufficient.isVisible = page.data.name != null && !canStart
+                val unfinishedId = page.data.activeId
+                val canGenerate = page.data.meaningCount >= 4
+                val canStart = page.data.name != null && (canGenerate || unfinishedId != null)
+                binding.insufficient.isVisible = page.data.name != null && !canGenerate
                 binding.insufficient.text = getString(R.string.quiz_insufficient, page.data.meaningCount)
                 binding.startQuiz.isEnabled = canStart && !screen.busy
-                binding.startQuiz.setText(if (page.data.activeId == null) R.string.quiz_start else R.string.quiz_resume)
+                binding.startQuiz.setText(if (unfinishedId == null) R.string.quiz_start else R.string.quiz_resume)
+                binding.replaceQuiz.isVisible = unfinishedId != null
+                binding.replaceQuiz.isEnabled = canGenerate && !screen.busy
+                binding.replaceQuiz.setOnClickListener {
+                    unfinishedId?.let(::confirmNewQuiz)
+                }
                 binding.noHistory.isVisible = page.data.history.isEmpty()
                 binding.historyRows.removeAllViews()
                 page.data.history.forEach { history ->

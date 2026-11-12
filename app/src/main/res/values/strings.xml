@@ -10,6 +10,11 @@
     <string name="add_book">新建单词本</string>
     <string name="add_word">添加单词</string>
     <string name="book_name">单词本名称</string>
+    <string name="word_search">搜索拼写或释义</string>
+    <string name="word_search_empty">没有找到匹配的单词。</string>
+    <string name="add_sample_book">导入示例词本</string>
+    <string name="sample_book_name">日常英语示例词本</string>
+    <string name="sample_book_exists">已存在同名的示例词本。</string>
     <string name="book_actions_hint">长按单词本可重命名或删除</string>
     <string name="rename_book">重命名单词本</string>
     <string name="delete_book">删除单词本</string>

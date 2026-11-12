@@ -6,6 +6,10 @@
     <string name="quiz_insufficient">至少需要 4 种不同释义，当前有 %1$d 种。请返回词本补充词条。</string>
     <string name="quiz_start">开始测试</string>
     <string name="quiz_resume">继续上次测试</string>
+    <string name="quiz_replace">放弃本轮并重新出题</string>
+    <string name="quiz_replace_title">重新开始测试？</string>
+    <string name="quiz_replace_message">当前未完成的答题进度将清除，新一轮会按当前词本出题。</string>
+    <string name="quiz_replace_confirm">重新出题</string>
     <string name="quiz_history">最近成绩</string>
     <string name="quiz_no_history">还没有完成的测试。答题会自动保存，中途退出后可以继续。</string>
     <string name="quiz_progress">第 %1$d / %2$d 题 · 选择正确释义</string>
@@ -22,8 +26,8 @@
     <string name="quiz_restart">再测一轮</string>
     <string name="quiz_back_lobby">返回测试首页</string>
     <string name="quiz_history_row">%1$s\n%2$d 分 · 答对 %3$d / %4$d 题</string>
-    <string name="quiz_saving">正在保存答案…</string>
-    <string name="quiz_save_failed">保存失败，当前答案尚未提交，请重试。</string>
+    <string name="quiz_saving">正在保存测试进度…</string>
+    <string name="quiz_save_failed">保存测试进度失败，请重试。</string>
     <string name="quiz_read_failed">暂时无法读取测试，请重试或返回。</string>
     <string name="statistics_tests">测试表现</string>
     <string name="statistics_test_empty">还没有完成的测试。可从词本进入「单词测试」。</string>

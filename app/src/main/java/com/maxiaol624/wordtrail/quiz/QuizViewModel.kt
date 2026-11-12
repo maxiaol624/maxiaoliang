@@ -66,8 +66,8 @@ class QuizViewModel(application: Application) : AndroidViewModel(application) {
     fun next(position: Int, total: Int) = navigate(route.value.copy(position = if (position + 1 < total) position + 1 else -1))
     fun retry() { saveFailed.value = false; reload.value++ }
 
-    fun start() = operation {
-        val id = dao.startOrResume(route.value.bookId, System.currentTimeMillis())
+    fun start(replaceUnfinishedId: String? = null) = operation {
+        val id = dao.startOrResume(route.value.bookId, System.currentTimeMillis(), replaceUnfinishedId)
         if (id != null) navigate(route.value.copy(sessionId = id, position = -1))
         else reload.value++
     }

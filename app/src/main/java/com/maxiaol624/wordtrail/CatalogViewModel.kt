@@ -51,6 +51,17 @@ class CatalogViewModel(private val application: Application) : AndroidViewModel(
 
     suspend fun addBook(name: String) = dao.insertBook(WordBook(name)) != -1L
 
+    suspend fun addSampleBook(): Long {
+        val words = withContext(Dispatchers.IO) {
+            application.resources.openRawResource(R.raw.sample_words).bufferedReader(Charsets.UTF_8).use {
+                WordCsv.read(it, bookId = 0).words
+            }
+        }
+        val id = dao.insertSampleBook(WordBook(application.getString(R.string.sample_book_name)), words)
+        if (id != -1L) StudyWidgetProvider.requestRefresh(application)
+        return id
+    }
+
     suspend fun renameBook(id: Long, name: String) = dao.renameBook(id, name) == 1
 
     suspend fun deleteBook(id: Long) {

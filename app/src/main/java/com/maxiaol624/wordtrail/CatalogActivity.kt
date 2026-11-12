@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -32,6 +33,8 @@ import kotlinx.coroutines.launch
 class CatalogActivity : AppCompatActivity() {
     private val model by lazy { ViewModelProvider(this)[CatalogViewModel::class.java] }
     private lateinit var binding: ActivityCatalogBinding
+    private var listedIds = emptyList<Long>()
+    private var restoredAnchor: ListAnchor? = null
     private val importCsv = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         val bookId = intent.getLongExtra(EXTRA_BOOK_ID, 0)
         if (uri != null && bookId > 0) model.importCsv(bookId, uri)
@@ -47,6 +50,10 @@ class CatalogActivity : AppCompatActivity() {
         setContentView(binding.root)
         applySystemBarPadding(binding.root)
         binding.back.setOnClickListener { finish() }
+        binding.wordSearch.setText(savedInstanceState?.getString("wordSearch").orEmpty())
+        savedInstanceState?.takeIf { it.containsKey("listId") }?.let {
+            restoredAnchor = ListAnchor(it.getLong("listId"), it.getInt("listPosition"), it.getInt("listOffset"))
+        }
 
         val wordId = intent.getLongExtra(EXTRA_WORD_ID, 0)
         val bookId = intent.getLongExtra(EXTRA_BOOK_ID, 0)
@@ -57,21 +64,51 @@ class CatalogActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("wordSearch", binding.wordSearch.text.toString())
+        (listAnchor() ?: restoredAnchor)?.let {
+            outState.putLong("listId", it.id)
+            outState.putInt("listPosition", it.position)
+            outState.putInt("listOffset", it.offset)
+        }
+        super.onSaveInstanceState(outState)
+    }
+
     private fun showBooks() {
         binding.pageTitle.setText(R.string.books_title)
         binding.add.setText(R.string.add_book)
         binding.add.setOnClickListener {
             showEditor()
         }
+        binding.addSampleBook.setOnClickListener { addSampleBook() }
         observe(model.books) { books ->
             binding.add.isVisible = true
+            binding.addSampleBook.isVisible = true
             binding.bookActionsHint.isVisible = books.isNotEmpty()
-            renderList(books, R.string.no_books, { it.name }) { book ->
+            renderList(books, R.string.no_books, WordBook::id, WordBook::name) { book ->
                 startActivity(bookIntent(this, book.id))
             }
             binding.list.setOnItemLongClickListener { _, _, position, _ ->
                 showBookActions(books[position])
                 true
+            }
+        }
+    }
+
+    private fun addSampleBook() {
+        binding.addSampleBook.isEnabled = false
+        lifecycleScope.launch {
+            try {
+                val bookId = model.addSampleBook()
+                if (bookId == -1L) {
+                    Toast.makeText(this@CatalogActivity, R.string.sample_book_exists, Toast.LENGTH_SHORT).show()
+                } else {
+                    startActivity(bookIntent(this@CatalogActivity, bookId))
+                }
+            } catch (_: SQLiteException) {
+                Toast.makeText(this@CatalogActivity, R.string.catalog_save_failed, Toast.LENGTH_SHORT).show()
+            } finally {
+                binding.addSampleBook.isEnabled = true
             }
         }
     }
@@ -104,6 +141,8 @@ class CatalogActivity : AppCompatActivity() {
     }
 
     private fun showBook(bookId: Long) {
+        var words = emptyList<Word>()
+        binding.wordSearch.doAfterTextChanged { renderWords(words, preservePosition = false) }
         binding.pageTitle.setText(R.string.words_title)
         binding.add.setText(R.string.add_word)
         binding.study.setOnClickListener {
@@ -136,17 +175,18 @@ class CatalogActivity : AppCompatActivity() {
         }
         observe(model.bookContents(bookId)) { contents ->
             if (contents == null) {
+                words = emptyList()
                 showMessage(R.string.book_missing)
             } else {
+                words = contents.words
                 binding.pageTitle.text = contents.book.name
                 binding.add.isVisible = true
                 binding.study.isVisible = contents.words.isNotEmpty()
                 binding.review.isVisible = contents.words.isNotEmpty()
                 binding.quiz.isVisible = true
                 binding.csvActions.isVisible = true
-                renderList(contents.words, R.string.no_words, { it.term }) { word ->
-                    startActivity(Intent(this, CatalogActivity::class.java).putExtra(EXTRA_WORD_ID, word.id))
-                }
+                binding.wordSearch.isVisible = words.isNotEmpty() || binding.wordSearch.text.isNotEmpty()
+                renderWords(words, preservePosition = true)
             }
         }
     }
@@ -206,12 +246,45 @@ class CatalogActivity : AppCompatActivity() {
         }
     }
 
-    private fun <T> renderList(items: List<T>, empty: Int, label: (T) -> String, open: (T) -> Unit) {
+    private fun renderWords(words: List<Word>, preservePosition: Boolean) {
+        val query = binding.wordSearch.text.toString().trim()
+        val matches = if (query.isEmpty()) words else words.filter {
+            it.term.contains(query, ignoreCase = true) || it.meaning.contains(query, ignoreCase = true)
+        }
+        val empty = if (query.isEmpty()) R.string.no_words else R.string.word_search_empty
+        renderList(matches, empty, Word::id, Word::term, preservePosition) { word ->
+            startActivity(Intent(this, CatalogActivity::class.java).putExtra(EXTRA_WORD_ID, word.id))
+        }
+    }
+
+    private fun listAnchor(): ListAnchor? {
+        val firstRow = binding.list.getChildAt(0) ?: return null
+        val position = binding.list.firstVisiblePosition
+        val id = listedIds.getOrNull(position) ?: return null
+        return ListAnchor(id, position, firstRow.top - binding.list.paddingTop)
+    }
+
+    private fun <T> renderList(
+        items: List<T>,
+        empty: Int,
+        id: (T) -> Long,
+        label: (T) -> String,
+        preservePosition: Boolean = true,
+        open: (T) -> Unit,
+    ) {
+        val anchor = if (preservePosition) restoredAnchor ?: listAnchor() else null
+        restoredAnchor = null
+        listedIds = items.map(id)
         binding.list.adapter = ArrayAdapter(this, R.layout.catalog_row, items.map(label))
         binding.list.setOnItemClickListener { _, _, position, _ -> open(items[position]) }
         binding.list.isVisible = items.isNotEmpty()
         binding.message.isVisible = items.isEmpty()
         binding.message.setText(empty)
+        if (anchor != null && listedIds.isNotEmpty()) {
+            val position = listedIds.indexOf(anchor.id).takeIf { it >= 0 }
+                ?: anchor.position.coerceIn(listedIds.indices)
+            binding.list.setSelectionFromTop(position, anchor.offset)
+        }
     }
 
     private fun showMessage(text: Int) {
@@ -224,9 +297,13 @@ class CatalogActivity : AppCompatActivity() {
         binding.detail.isVisible = false
         binding.wordActions.isVisible = false
         binding.bookActionsHint.isVisible = false
+        binding.wordSearch.isVisible = false
+        binding.addSampleBook.isVisible = false
         binding.message.isVisible = true
         binding.message.setText(text)
     }
+
+    private data class ListAnchor(val id: Long, val position: Int, val offset: Int)
 
     private fun showCsvActions() {
         val choices = arrayOf(getString(R.string.csv_import), getString(R.string.csv_export))
