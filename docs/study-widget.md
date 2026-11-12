@@ -9,8 +9,8 @@
 | 学新词 | 打开最早加入的待学词所在词本，进入新词学习 |
 | 去复习 | 打开最早到期词所在词本，进入到期复习 |
 
-无词条时显示添加单词的提示。没有待学词时提供「打开单词本」，没有到期词时提供「查看学习统计」。点击「学新词」或「去复习」时会重新查找当前任务。
+无词条时显示添加单词的提示。没有待学词时提供「打开单词本」。点击复习入口时会重新查询当前队列，有到期词就进入对应词本，否则打开学习统计。
 
-`StudyWidgetProvider` 使用 `RemoteViews` 渲染桌面卡片，通过 `WidgetDao` 从应用的 Room 数据库读取汇总。首次添加、保存学习或复习结果、添加或导入词条以及进入首页时触发刷新。系统时间或时区变化时重新计算今日数据。每次刷新更新所有已添加的实例。
+`StudyWidgetProvider` 使用 `RemoteViews` 渲染桌面卡片，通过 `WidgetDao` 从应用的 Room 数据库读取汇总。首次添加、保存学习或复习结果、增删词条或删除词本以及进入首页时触发刷新。系统时间、时区变化或设备重启后重新计算。每次刷新更新所有已添加的实例。
 
-后台周期设为 30 分钟，执行时间由 Android 调度。自然跨日或新词到期后，桌面数值会在下次刷新时更新。参见 [Android 小组件刷新说明](https://developer.android.com/develop/ui/views/appwidgets/advanced#determine-how-often-to-update-a-widget)。
+小组件每次刷新后，以最近的未来到期时间与本地零点中较早的时间安排下一次更新，同时保留 30 分钟周期。后台执行时间由 Android 调度。首页保持打开时会在到期时重新计算，并通知小组件更新。 [Android 小组件刷新说明](https://developer.android.com/develop/ui/views/appwidgets/advanced#determine-how-often-to-update-a-widget)
