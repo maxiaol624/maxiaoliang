@@ -11,18 +11,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.maxiaol624.wordtrail.databinding.ActivityMainBinding
 import com.maxiaol624.wordtrail.data.WordDatabase
 import com.maxiaol624.wordtrail.reminder.ReminderCoordinator
 import com.maxiaol624.wordtrail.widget.StudyWidgetProvider
+import java.time.LocalDate
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applySystemBarPadding(binding.root)
         binding.openBooks.setOnClickListener {
@@ -43,11 +52,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
         if (savedInstanceState == null) openWidgetShortcut(intent.action)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) { refreshToday() }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        StudyWidgetProvider.requestRefresh(this)
         lifecycleScope.launch {
             try {
                 ReminderCoordinator.refresh(applicationContext)
@@ -56,6 +67,38 @@ class MainActivity : AppCompatActivity() {
             } catch (error: Exception) {
                 Log.w("ReviewReminder", "Unable to restore reminder scheduling", error)
             }
+        }
+    }
+
+    private suspend fun refreshToday() {
+        val dao = WordDatabase.get(applicationContext).widget()
+        val dateFormat = DateTimeFormatter.ofPattern("M月d日 · EEEE", Locale.SIMPLIFIED_CHINESE)
+        var previousSummary: Pair<LocalDate, Int>? = null
+        while (true) {
+            val now = ZonedDateTime.now()
+            val date = now.toLocalDate()
+            val timestamp = now.toInstant().toEpochMilli()
+            var nextRefresh = timestamp + 60_000L
+            binding.homeDate.text = now.format(dateFormat)
+            try {
+                val start = date.atStartOfDay(now.zone).toInstant().toEpochMilli()
+                val summary = dao.summary(start, timestamp)
+                binding.homeLearned.text = getString(R.string.home_count, summary.learnedToday)
+                binding.homeDue.text = getString(R.string.home_count, summary.dueCount)
+                val currentSummary = date to summary.dueCount
+                if (previousSummary != currentSummary) {
+                    StudyWidgetProvider.requestRefresh(this)
+                    previousSummary = currentSummary
+                }
+                nextRefresh = minOf(nextRefresh, summary.nextRefreshAt(now))
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                binding.homeLearned.setText(R.string.home_count_unavailable)
+                binding.homeDue.setText(R.string.home_count_unavailable)
+                Log.w("WordTrail", "Unable to load today's study counts", error)
+            }
+            delay((nextRefresh - System.currentTimeMillis()).coerceIn(1L, 60_000L))
         }
     }
 

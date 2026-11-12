@@ -142,6 +142,8 @@ class StudyActivity : AppCompatActivity() {
         binding.practiceAgain.isVisible = false
         binding.card.isVisible = true
         binding.term.text = current.term
+        binding.phonetic.text = current.phonetic
+        binding.phonetic.isVisible = current.phonetic.isNotBlank()
         binding.meaning.text = if (revealed) current.meaning else ""
         binding.meaning.isVisible = revealed
         binding.reveal.isVisible = !revealed

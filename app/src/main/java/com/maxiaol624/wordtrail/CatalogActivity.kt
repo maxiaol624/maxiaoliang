@@ -2,13 +2,18 @@ package com.maxiaol624.wordtrail
 
 import android.content.Context
 import android.content.Intent
+import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteException
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputType
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +22,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.maxiaol624.wordtrail.data.Word
+import com.maxiaol624.wordtrail.data.WordBook
 import com.maxiaol624.wordtrail.databinding.ActivityCatalogBinding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -54,17 +61,46 @@ class CatalogActivity : AppCompatActivity() {
         binding.pageTitle.setText(R.string.books_title)
         binding.add.setText(R.string.add_book)
         binding.add.setOnClickListener {
-            showEditor(
-                R.string.add_book, R.string.book_name, R.string.book_exists,
-                save = { name, _ -> model.addBook(name) },
-            )
+            showEditor()
         }
         observe(model.books) { books ->
             binding.add.isVisible = true
+            binding.bookActionsHint.isVisible = books.isNotEmpty()
             renderList(books, R.string.no_books, { it.name }) { book ->
                 startActivity(bookIntent(this, book.id))
             }
+            binding.list.setOnItemLongClickListener { _, _, position, _ ->
+                showBookActions(books[position])
+                true
+            }
         }
+    }
+
+    private fun showBookActions(book: WordBook) {
+        val actions = arrayOf(getString(R.string.rename_book), getString(R.string.delete_book))
+        AlertDialog.Builder(this)
+            .setTitle(book.name)
+            .setItems(actions) { _, index ->
+                if (index == 0) showEditor(originalBook = book) else confirmDeleteBook(book)
+            }
+            .show()
+    }
+
+    private fun confirmDeleteBook(book: WordBook) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.delete_book_title)
+            .setMessage(getString(R.string.delete_book_message, book.name))
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.delete_book) { _, _ ->
+                lifecycleScope.launch {
+                    try {
+                        model.deleteBook(book.id)
+                    } catch (_: SQLiteException) {
+                        Toast.makeText(this@CatalogActivity, R.string.book_delete_failed, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .show()
     }
 
     private fun showBook(bookId: Long) {
@@ -96,10 +132,7 @@ class CatalogActivity : AppCompatActivity() {
             }
         }
         binding.add.setOnClickListener {
-            showEditor(
-                R.string.add_word, R.string.word_term, R.string.word_exists, hasMeaning = true,
-                save = { term, meaning -> model.addWord(bookId, term, meaning) },
-            )
+            showEditor(bookId = bookId)
         }
         observe(model.bookContents(bookId)) { contents ->
             if (contents == null) {
@@ -126,6 +159,9 @@ class CatalogActivity : AppCompatActivity() {
             } else {
                 binding.message.isVisible = false
                 binding.detail.isVisible = true
+                binding.wordActions.isVisible = true
+                binding.editWord.setOnClickListener { showEditor(bookId = word.bookId, word = word) }
+                binding.deleteWord.setOnClickListener { confirmDelete(word) }
                 binding.term.text = word.term
                 binding.meaning.text = word.meaning
                 val details = listOf(
@@ -137,6 +173,28 @@ class CatalogActivity : AppCompatActivity() {
                 binding.extraDetails.text = details.joinToString("\n\n") { (label, value) -> getString(label, value) }
             }
         }
+    }
+
+    private fun confirmDelete(word: Word) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.delete_word_title)
+            .setMessage(getString(R.string.delete_word_message, word.term))
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.delete_word) { _, _ ->
+                binding.editWord.isEnabled = false
+                binding.deleteWord.isEnabled = false
+                lifecycleScope.launch {
+                    try {
+                        model.deleteWord(word.id)
+                        finish()
+                    } catch (_: SQLiteException) {
+                        binding.editWord.isEnabled = true
+                        binding.deleteWord.isEnabled = true
+                        Toast.makeText(this@CatalogActivity, R.string.word_delete_failed, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .show()
     }
 
     private fun <T> observe(flow: Flow<T>, render: (T) -> Unit) {
@@ -164,6 +222,8 @@ class CatalogActivity : AppCompatActivity() {
         binding.csvActions.isVisible = false
         binding.list.isVisible = false
         binding.detail.isVisible = false
+        binding.wordActions.isVisible = false
+        binding.bookActionsHint.isVisible = false
         binding.message.isVisible = true
         binding.message.setText(text)
     }
@@ -185,34 +245,51 @@ class CatalogActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun showEditor(
-        title: Int,
-        hint: Int,
-        duplicate: Int,
-        hasMeaning: Boolean = false,
-        save: suspend (String, String) -> Boolean,
-    ) {
+    private fun showEditor(bookId: Long? = null, word: Word? = null, originalBook: WordBook? = null) {
+        val title = when {
+            originalBook != null -> R.string.rename_book
+            word != null -> R.string.edit_word
+            bookId != null -> R.string.add_word
+            else -> R.string.add_book
+        }
+        val duplicate = if (bookId == null) R.string.book_exists else R.string.word_exists
         val fields = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             val padding = resources.getDimensionPixelSize(R.dimen.catalog_padding)
             setPadding(padding, 0, padding, 0)
         }
-        val nameField = EditText(this).apply {
-            setHint(hint)
-            setSingleLine(true)
-            filters = arrayOf(InputFilter.LengthFilter(80))
+        fun field(label: Int, value: String, limit: Int, multiline: Boolean = false): EditText {
+            val input = EditText(this).apply {
+                id = View.generateViewId()
+                if (multiline) {
+                    inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                    maxLines = 4
+                } else {
+                    setSingleLine(true)
+                }
+                filters = arrayOf(InputFilter.LengthFilter(limit))
+                setText(value)
+            }
+            fields.addView(TextView(this).apply {
+                setText(label)
+                labelFor = input.id
+            })
+            fields.addView(input)
+            return input
         }
-        fields.addView(nameField)
-        val meaningField = if (hasMeaning) EditText(this).apply {
-            setHint(R.string.word_meaning)
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-            filters = arrayOf(InputFilter.LengthFilter(500))
-            fields.addView(this)
-        } else null
+        val nameField = field(
+            if (bookId == null) R.string.book_name else R.string.word_term,
+            originalBook?.name ?: word?.term.orEmpty(),
+            80,
+        )
+        val meaningField = bookId?.let { field(R.string.word_meaning, word?.meaning.orEmpty(), 500, multiline = true) }
+        val phoneticField = word?.let { field(R.string.word_phonetic, it.phonetic, 120) }
+        val exampleField = word?.let { field(R.string.word_example, it.example, 1000, multiline = true) }
+        val translationField = word?.let { field(R.string.word_example_translation, it.exampleTranslation, 1000, multiline = true) }
 
         val dialog = AlertDialog.Builder(this)
             .setTitle(title)
-            .setView(fields)
+            .setView(ScrollView(this).apply { addView(fields) })
             .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(R.string.save, null)
             .show()
@@ -234,8 +311,26 @@ class CatalogActivity : AppCompatActivity() {
             cancel.isEnabled = false
             lifecycleScope.launch {
                 try {
-                    if (save(name, meaning)) dialog.dismiss()
-                    else nameField.error = getString(duplicate)
+                    val saved = when {
+                        originalBook != null -> model.renameBook(originalBook.id, name)
+                        word != null -> model.updateWord(word.copy(
+                            term = name,
+                            meaning = meaning,
+                            phonetic = phoneticField?.text?.toString()?.trim().orEmpty(),
+                            example = exampleField?.text?.toString()?.trim().orEmpty(),
+                            exampleTranslation = translationField?.text?.toString()?.trim().orEmpty(),
+                        ))
+                        bookId != null -> model.addWord(bookId, name, meaning)
+                        else -> model.addBook(name)
+                    }
+                    if (saved) dialog.dismiss()
+                    else nameField.error = getString(when {
+                        originalBook != null -> R.string.book_missing
+                        word != null -> R.string.word_missing
+                        else -> duplicate
+                    })
+                } catch (_: SQLiteConstraintException) {
+                    nameField.error = getString(duplicate)
                 } catch (_: SQLiteException) {
                     nameField.error = getString(R.string.catalog_save_failed)
                 } finally {

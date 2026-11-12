@@ -4,7 +4,7 @@
     <color name="progress_track">#E3E9E3</color>
     <string name="open_statistics">查看学习统计</string>
     <string name="statistics_title">学习统计</string>
-    <string name="statistics_date">%1$s · 每一点积累都算数</string>
+    <string name="statistics_date">%1$s</string>
     <string name="statistics_today_new">今日新学\n%1$d 词</string>
     <string name="statistics_today_reviews">今日复习\n%1$d 次</string>
     <string name="statistics_streak">连续学习\n%1$d 天</string>
@@ -43,7 +43,7 @@
         <item name="android:padding">16dp</item>
         <item name="android:lineSpacingExtra">6dp</item>
         <item name="android:textColor">@color/ink</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
     <style name="StatisticsCard">
         <item name="android:layout_width">match_parent</item>

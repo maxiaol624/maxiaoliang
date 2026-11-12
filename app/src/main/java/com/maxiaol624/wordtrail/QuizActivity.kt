@@ -99,13 +99,24 @@ class QuizActivity : AppCompatActivity() {
                 val question = page.attempt.questions[page.position]
                 binding.questionProgress.text = getString(R.string.quiz_progress, page.position + 1, page.attempt.questions.size)
                 binding.quizTerm.text = question.term
+                val choice = question.selectedIndex
                 listOf(binding.optionA, binding.optionB, binding.optionC, binding.optionD).forEachIndexed { index, button ->
                     button.text = getString(R.string.quiz_option, ('A' + index).toString(), question.options()[index])
-                    button.isEnabled = question.selectedIndex == null && !screen.busy
+                    button.isEnabled = choice == null && !screen.busy
+                    button.isSelected = choice == index
+                    button.setBackgroundResource(when {
+                        choice == null -> R.drawable.action_card
+                        index == question.correctIndex -> R.drawable.action_secondary
+                        index == choice -> R.drawable.action_cream
+                        else -> R.drawable.action_card
+                    })
                     button.setOnClickListener { model.answer(page.position, index) }
                 }
-                val choice = question.selectedIndex
                 binding.answerFeedback.isVisible = choice != null
+                binding.answerFeedback.setBackgroundResource(
+                    if (question.isCorrect()) R.drawable.action_secondary else R.drawable.action_cream,
+                )
+                binding.answerFeedback.setTextColor(getColor(if (question.isCorrect()) R.color.ink else R.color.gold_ink))
                 binding.answerFeedback.text = when {
                     choice == null -> ""
                     question.isCorrect() -> getString(R.string.quiz_correct, question.options()[question.correctIndex])

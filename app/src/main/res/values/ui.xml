@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="line">#DFE6DC</color>
+    <color name="mint_surface">#E8F1E8</color>
+    <color name="cream_surface">#F8EED8</color>
+    <color name="hero_ink">#F9F7EE</color>
+    <color name="hero_muted">#C6DCD0</color>
+    <color name="hero_start">#183C32</color>
+    <color name="hero_end">#285747</color>
+    <color name="gold_ink">#785325</color>
+    <color name="pressed">#2426725B</color>
+    <color name="pressed_on_dark">#28FFFFFF</color>
+    <string name="home_today">今日学习</string>
+    <string name="home_tools">学习工具</string>
+    <string name="home_count">%1$d</string>
+    <string name="home_count_unavailable">—</string>
+    <string name="home_learned_label">今日新学 · 词</string>
+    <string name="home_due_label">待复习 · 词</string>
+    <string name="study_rating_prompt">这次记得怎么样？</string>
+
+    <style name="WordTrailButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/action_secondary</item>
+        <item name="android:backgroundTint">@null</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textColor">@color/action_secondary_text</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+    <style name="WordTrailPrimary" parent="WordTrailButton">
+        <item name="android:background">@drawable/action_primary</item>
+        <item name="android:textColor">@color/action_primary_text</item>
+    </style>
+    <style name="WordTrailCream" parent="WordTrailButton">
+        <item name="android:background">@drawable/action_cream</item>
+        <item name="android:textColor">@color/ink</item>
+    </style>
+    <style name="WordTrailBack" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:drawableStart">@drawable/ic_page_back</item>
+        <item name="android:drawablePadding">6dp</item>
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <style name="WordTrailTool" parent="WordTrailButton">
+        <item name="android:background">@drawable/action_card</item>
+        <item name="android:minHeight">76dp</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:drawablePadding">12dp</item>
+    </style>
+    <style name="WordTrailChoice" parent="WordTrailButton">
+        <item name="android:background">@drawable/action_card</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:minHeight">52dp</item>
+    </style>
+</resources>

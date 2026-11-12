@@ -1,7 +1,13 @@
 package com.maxiaol624.wordtrail
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -52,10 +58,10 @@ class StatisticsActivity : AppCompatActivity() {
         binding.dateLabel.text = getString(
             R.string.statistics_date, report.today.format(DateTimeFormatter.ofPattern("M 月 d 日")),
         )
-        binding.todayNew.text = getString(R.string.statistics_today_new, report.todayNew)
-        binding.todayReviews.text = getString(R.string.statistics_today_reviews, report.todayReviews)
-        binding.streakDays.text = getString(R.string.statistics_streak, report.streakDays)
-        binding.dueNow.text = getString(R.string.statistics_due, report.dueNow)
+        showMetric(binding.todayNew, R.string.statistics_today_new, report.todayNew)
+        showMetric(binding.todayReviews, R.string.statistics_today_reviews, report.todayReviews)
+        showMetric(binding.streakDays, R.string.statistics_streak, report.streakDays)
+        showMetric(binding.dueNow, R.string.statistics_due, report.dueNow)
         binding.overallSummary.text = progressText(report.totalLearned, report.totalWords)
         binding.overallProgress.max = report.totalWords.coerceAtLeast(1)
         binding.overallProgress.progress = report.totalLearned
@@ -95,6 +101,15 @@ class StatisticsActivity : AppCompatActivity() {
             row.openBook.contentDescription = getString(R.string.statistics_open_book) + " " + book.name
             row.openBook.setOnClickListener { startActivity(CatalogActivity.bookIntent(this, book.id)) }
             binding.bookRows.addView(row.root)
+        }
+    }
+
+    private fun showMetric(view: TextView, label: Int, value: Int) {
+        val text = getString(label, value)
+        val countStart = text.indexOf('\n') + 1
+        view.text = SpannableString(text).apply {
+            setSpan(RelativeSizeSpan(1.6f), countStart, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(StyleSpan(Typeface.BOLD), countStart, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 

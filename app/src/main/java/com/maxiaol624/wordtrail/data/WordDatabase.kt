@@ -16,6 +16,7 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
+import androidx.room.Update
 import com.maxiaol624.wordtrail.stats.StatisticsDao
 import com.maxiaol624.wordtrail.quiz.QuizDao
 import com.maxiaol624.wordtrail.quiz.QuizSession
@@ -184,11 +185,23 @@ interface WordDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertBook(book: WordBook): Long
 
+    @Query("UPDATE word_books SET name = :name WHERE id = :id")
+    suspend fun renameBook(id: Long, name: String): Int
+
+    @Query("DELETE FROM word_books WHERE id = :id")
+    suspend fun deleteBook(id: Long): Int
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertWord(word: Word): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertWords(words: List<Word>): List<Long>
+
+    @Update
+    suspend fun updateWord(word: Word): Int
+
+    @Query("DELETE FROM words WHERE id = :id")
+    suspend fun deleteWord(id: Long): Int
 }
 
 @Database(

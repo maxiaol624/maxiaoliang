@@ -2,13 +2,20 @@ package com.maxiaol624.wordtrail.widget
 
 import androidx.room.Dao
 import androidx.room.Query
+import java.time.ZonedDateTime
 
 data class WidgetSummary(
     val learnedToday: Int,
     val dueCount: Int,
     val hasWords: Boolean,
     val hasNewWords: Boolean,
-)
+    val nextDueAt: Long?,
+) {
+    fun nextRefreshAt(now: ZonedDateTime): Long {
+        val midnight = now.toLocalDate().plusDays(1).atStartOfDay(now.zone).toInstant().toEpochMilli()
+        return minOf(midnight, nextDueAt ?: midnight)
+    }
+}
 
 @Dao
 interface WidgetDao {
@@ -21,7 +28,8 @@ interface WidgetDao {
                 SELECT 1 FROM words WHERE NOT EXISTS (
                     SELECT 1 FROM first_reviews WHERE wordId = words.id
                 )
-            ) AS hasNewWords
+            ) AS hasNewWords,
+            (SELECT MIN(dueAt) FROM review_schedules WHERE dueAt > :now) AS nextDueAt
     """)
     suspend fun summary(startOfDay: Long, now: Long): WidgetSummary
 

@@ -1,5 +1,6 @@
 package com.maxiaol624.wordtrail.widget
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -11,7 +12,6 @@ import android.widget.RemoteViews
 import com.maxiaol624.wordtrail.CatalogActivity
 import com.maxiaol624.wordtrail.MainActivity
 import com.maxiaol624.wordtrail.R
-import com.maxiaol624.wordtrail.StatisticsActivity
 import com.maxiaol624.wordtrail.data.WordDatabase
 import java.time.ZonedDateTime
 import kotlinx.coroutines.CoroutineScope
@@ -24,13 +24,18 @@ import kotlinx.coroutines.withTimeout
 class StudyWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
-            RefreshAction, Intent.ACTION_TIME_CHANGED, Intent.ACTION_TIMEZONE_CHANGED -> refresh(context)
+            RefreshAction, Intent.ACTION_TIME_CHANGED, Intent.ACTION_TIMEZONE_CHANGED,
+            Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> refresh(context)
             else -> super.onReceive(context, intent)
         }
     }
 
     override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
         refresh(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        context.getSystemService(AlarmManager::class.java).cancel(refreshAlarm(context))
     }
 
     private fun refresh(context: Context) {
@@ -47,6 +52,11 @@ class StudyWidgetProvider : AppWidgetProvider() {
                         val dayStart = now.toLocalDate().atStartOfDay(now.zone).toInstant().toEpochMilli()
                         val summary = WordDatabase.get(app).widget().summary(dayStart, now.toInstant().toEpochMilli())
                         manager.updateAppWidget(provider, views(app, summary))
+                        val alarms = app.getSystemService(AlarmManager::class.java)
+                        val alarm = refreshAlarm(app)
+                        // Refresh near the next change while the device is awake.
+                        alarms.setWindow(AlarmManager.RTC, summary.nextRefreshAt(now), 10 * 60_000L, alarm)
+                        if (manager.getAppWidgetIds(provider).isEmpty()) alarms.cancel(alarm)
                     }
                 }
             } catch (error: Exception) {
@@ -65,10 +75,16 @@ class StudyWidgetProvider : AppWidgetProvider() {
 
         fun component(context: Context) = ComponentName(context, StudyWidgetProvider::class.java)
 
+        private fun refreshIntent(context: Context) = Intent(RefreshAction).setComponent(component(context))
+
+        private fun refreshAlarm(context: Context) = PendingIntent.getBroadcast(
+            context, 0, refreshIntent(context), PendingIntent.FLAG_IMMUTABLE,
+        )
+
         fun requestRefresh(context: Context) {
             val provider = component(context)
             if (AppWidgetManager.getInstance(context).getAppWidgetIds(provider).isNotEmpty()) {
-                context.sendBroadcast(Intent(RefreshAction).setComponent(provider))
+                context.sendBroadcast(refreshIntent(context))
             }
         }
 
@@ -87,8 +103,7 @@ class StudyWidgetProvider : AppWidgetProvider() {
                 ))
                 val learn = if (summary.hasNewWords) Intent(context, MainActivity::class.java).setAction(LearnAction)
                 else Intent(context, CatalogActivity::class.java)
-                val review = if (summary.dueCount > 0) Intent(context, MainActivity::class.java).setAction(ReviewAction)
-                else Intent(context, StatisticsActivity::class.java)
+                val review = Intent(context, MainActivity::class.java).setAction(ReviewAction)
                 setOnClickPendingIntent(R.id.widget_learn, shortcut(context, learn))
                 setOnClickPendingIntent(R.id.widget_review, shortcut(context, review))
             }

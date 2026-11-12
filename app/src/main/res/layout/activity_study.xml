@@ -46,33 +46,54 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/card_background"
             android:orientation="vertical"
-            android:padding="20dp"
             android:visibility="gone">
-            <TextView
-                android:id="@+id/term"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/ink"
-                android:textSize="30sp"
-                android:textStyle="bold" />
+                android:background="@drawable/study_hero"
+                android:gravity="center"
+                android:minHeight="184dp"
+                android:orientation="vertical"
+                android:padding="24dp">
+                <TextView
+                    android:id="@+id/term"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:textColor="@color/hero_ink"
+                    android:textSize="40sp" />
+                <TextView
+                    android:id="@+id/phonetic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textColor="@color/hero_muted"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+            </LinearLayout>
             <TextView
                 android:id="@+id/meaning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:textColor="@color/ink_secondary"
-                android:textSize="18sp"
+                android:background="@drawable/card_background"
+                android:padding="20dp"
+                android:textColor="@color/ink"
+                android:textSize="20sp"
                 android:visibility="gone" />
             <Button
                 android:id="@+id/reveal"
+                style="@style/WordTrailPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/study_reveal" />
             <Button
                 android:id="@+id/practice_next"
+                style="@style/WordTrailPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -85,21 +106,47 @@
                 android:layout_marginTop="16dp"
                 android:orientation="vertical"
                 android:visibility="gone">
-                <Button
-                    android:id="@+id/again"
+                <TextView
+                    style="@style/StatisticsText"
+                    android:text="@string/study_rating_prompt" />
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/study_again" />
-                <Button
-                    android:id="@+id/hard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/study_hard" />
-                <Button
-                    android:id="@+id/good"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/study_good" />
+                    android:layout_marginTop="8dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/again"
+                        style="@style/WordTrailCream"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp"
+                        android:text="@string/study_again"
+                        android:textSize="13sp" />
+                    <Button
+                        android:id="@+id/hard"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp"
+                        android:text="@string/study_hard"
+                        android:textSize="13sp" />
+                    <Button
+                        android:id="@+id/good"
+                        style="@style/WordTrailPrimary"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp"
+                        android:text="@string/study_good"
+                        android:textSize="13sp" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

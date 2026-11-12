@@ -51,10 +51,22 @@ class CatalogViewModel(private val application: Application) : AndroidViewModel(
 
     suspend fun addBook(name: String) = dao.insertBook(WordBook(name)) != -1L
 
+    suspend fun renameBook(id: Long, name: String) = dao.renameBook(id, name) == 1
+
+    suspend fun deleteBook(id: Long) {
+        if (dao.deleteBook(id) == 1) StudyWidgetProvider.requestRefresh(application)
+    }
+
     suspend fun addWord(bookId: Long, term: String, meaning: String) =
         (dao.insertWord(Word(bookId, term, meaning)) != -1L).also { inserted ->
             if (inserted) StudyWidgetProvider.requestRefresh(application)
         }
+
+    suspend fun updateWord(word: Word) = dao.updateWord(word) == 1
+
+    suspend fun deleteWord(id: Long) {
+        if (dao.deleteWord(id) == 1) StudyWidgetProvider.requestRefresh(application)
+    }
 
     private val transfer = MutableStateFlow<CsvTransfer>(CsvTransfer.Idle)
     val csvTransfer = transfer.asStateFlow()

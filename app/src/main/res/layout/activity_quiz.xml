@@ -23,7 +23,8 @@
                         <TextView style="@style/StatisticsText" android:layout_marginTop="12dp" android:text="@string/quiz_intro" />
                         <TextView style="@style/StatisticsText" android:layout_marginTop="12dp" android:text="@string/quiz_scope" />
                         <TextView android:id="@+id/insufficient" style="@style/StatisticsText" android:layout_marginTop="12dp" />
-                        <Button android:id="@+id/start_quiz" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        <Button android:id="@+id/start_quiz" style="@style/WordTrailPrimary"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
                             android:layout_marginTop="12dp" android:text="@string/quiz_start" />
                     </LinearLayout>
                     <TextView style="@style/StatisticsHeading" android:layout_marginTop="24dp" android:text="@string/quiz_history" />
@@ -36,14 +37,18 @@
                     <TextView android:id="@+id/question_progress" style="@style/StatisticsText" />
                     <TextView android:id="@+id/quiz_term" style="@style/StatisticsHeading"
                         android:layout_marginTop="20dp" android:textSize="30sp" />
-                    <Button android:id="@+id/option_a" android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp" android:textAllCaps="false" />
-                    <Button android:id="@+id/option_b" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="false" />
-                    <Button android:id="@+id/option_c" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="false" />
-                    <Button android:id="@+id/option_d" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="false" />
+                    <Button android:id="@+id/option_a" style="@style/WordTrailChoice"
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" />
+                    <Button android:id="@+id/option_b" style="@style/WordTrailChoice"
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" />
+                    <Button android:id="@+id/option_c" style="@style/WordTrailChoice"
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" />
+                    <Button android:id="@+id/option_d" style="@style/WordTrailChoice"
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" />
                     <TextView android:id="@+id/answer_feedback" style="@style/StatisticsText"
-                        android:layout_marginTop="16dp" android:textColor="@color/ink" android:lineSpacingExtra="4dp" />
-                    <Button android:id="@+id/next_question" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp" android:padding="14dp" android:lineSpacingExtra="4dp" />
+                    <Button android:id="@+id/next_question" style="@style/WordTrailPrimary"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginTop="12dp" android:text="@string/quiz_next" />
                 </LinearLayout>
                 <LinearLayout android:id="@+id/result" android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -53,10 +58,11 @@
                         <TextView android:id="@+id/score" style="@style/StatisticsHeading"
                             android:layout_marginTop="16dp" android:textSize="26sp" android:lineSpacingExtra="8dp" />
                         <TextView android:id="@+id/completed_at" style="@style/StatisticsText" android:layout_marginTop="12dp" />
-                        <Button android:id="@+id/restart_quiz" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        <Button android:id="@+id/restart_quiz" style="@style/WordTrailPrimary"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
                             android:layout_marginTop="12dp" android:text="@string/quiz_restart" />
                         <Button android:id="@+id/back_lobby" android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:text="@string/quiz_back_lobby" />
+                            android:layout_marginTop="8dp" android:text="@string/quiz_back_lobby" />
                     </LinearLayout>
                     <TextView style="@style/StatisticsHeading" android:layout_marginTop="24dp" android:text="@string/quiz_wrong_title" />
                     <TextView android:id="@+id/all_correct" style="@style/StatisticsText" android:layout_marginTop="12dp" android:text="@string/quiz_all_correct" />

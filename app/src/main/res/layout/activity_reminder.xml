@@ -27,7 +27,8 @@
                     <TextView style="@style/StatisticsText" android:layout_marginTop="12dp" android:text="@string/reminder_description" />
                     <TextView android:id="@+id/reminder_status" style="@style/StatisticsText"
                         android:layout_marginTop="16dp" android:textColor="@color/ink" />
-                    <Button android:id="@+id/notification_permission" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    <Button android:id="@+id/notification_permission" style="@style/WordTrailPrimary"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginTop="12dp" android:visibility="gone" />
                 </LinearLayout>
                 <Button android:id="@+id/open_books" android:layout_width="match_parent" android:layout_height="wrap_content"
