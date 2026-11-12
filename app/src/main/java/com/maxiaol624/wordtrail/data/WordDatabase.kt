@@ -88,7 +88,7 @@ data class ReviewEvent(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 )
 
-data class ScheduledWord(@Embedded val word: Word, val stage: Int, val dueAt: Long)
+data class ScheduledWord(@Embedded val word: Word, val dueAt: Long, val lastReviewedAt: Long)
 data class DueReviewBook(val id: Long, val name: String, val dueCount: Int)
 
 @Dao
@@ -124,8 +124,13 @@ interface WordDao {
     fun nextPracticeWord(bookId: Long, afterId: Long): Flow<Word?>
 
     @Query("""
-        SELECT words.*, review_schedules.stage, review_schedules.dueAt
+        SELECT words.*, review_schedules.dueAt,
+            COALESCE(
+                (SELECT reviewedAt FROM review_events WHERE wordId = words.id ORDER BY id DESC LIMIT 1),
+                first_reviews.reviewedAt
+            ) AS lastReviewedAt
         FROM words JOIN review_schedules ON review_schedules.wordId = words.id
+        JOIN first_reviews ON first_reviews.wordId = words.id
         WHERE words.bookId = :bookId
         ORDER BY review_schedules.dueAt, words.id
         LIMIT 1
@@ -159,15 +164,19 @@ interface WordDao {
     @Transaction
     suspend fun recordFirstReview(wordId: Long, rating: LearningRating, now: Long) {
         if (insertFirstReview(FirstReview(wordId, rating.name, now)) == -1L) return
-        val stage = ReviewIntervals.firstStage(rating)
-        insertSchedule(ReviewSchedule(wordId, stage, now + ReviewIntervals.delayFor(stage)))
+        val delay = EbbinghausScheduler.firstDelay(rating)
+        insertSchedule(ReviewSchedule(wordId, EbbinghausScheduler.stageFor(delay), now + delay))
     }
 
     @Transaction
     suspend fun recordScheduledReview(current: ScheduledWord, rating: LearningRating, now: Long) {
         if (current.dueAt > now) return
-        val stage = ReviewIntervals.nextStage(current.stage, rating)
-        if (updateSchedule(current.word.id, current.dueAt, stage, now + ReviewIntervals.delayFor(stage)) == 1) {
+        val delay = EbbinghausScheduler.nextDelay(
+            previousDelay = current.dueAt - current.lastReviewedAt,
+            elapsedMillis = now - current.lastReviewedAt,
+            rating = rating,
+        )
+        if (updateSchedule(current.word.id, current.dueAt, EbbinghausScheduler.stageFor(delay), now + delay) == 1) {
             insertReviewEvent(ReviewEvent(current.word.id, rating.name, now))
         }
     }

@@ -17,8 +17,8 @@
     <string name="statistics_day_counts">%1$d 词新学 · %2$d 次复习</string>
     <string name="statistics_today">今天</string>
     <string name="statistics_stages">复习阶段</string>
-    <string name="statistics_stage_summary">需加强（10 分钟～1 天）　%1$d 词\n巩固中（3～7 天）　%2$d 词\n长间隔（14～30 天）　%3$d 词</string>
-    <string name="statistics_stage_hint">按当前复习间隔分组，用来了解学习分布，不代表已经永久记住。</string>
+    <string name="statistics_stage_summary">短间隔（不足 3 天）　%1$d 词\n中间隔（3 天至不足 14 天）　%2$d 词\n长间隔（14 天及以上）　%3$d 词</string>
+    <string name="statistics_stage_hint">按当前复习间隔分组。</string>
     <string name="statistics_books">词本进度</string>
     <string name="statistics_book_due">待复习 %1$d 词</string>
     <string name="statistics_open_book">打开词本</string>
